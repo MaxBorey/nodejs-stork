@@ -15,7 +15,7 @@ servers:
   - url: http://localhost:3000
   # - url: https://example.com/api/v1
 paths:
-  /auth/register:
+  /api/auth/register:
     post:
       $ref: ../swagger/paths/api/auth/register/post.yaml
 components:
