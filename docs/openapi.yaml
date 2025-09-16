@@ -1,0 +1,25 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Stork app
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: This is a documentation of stork app
+tags:
+  - name: Stork
+    description: Pregnancy progress tracking app.
+  - name: Auth
+    description: Auth operations.
+servers:
+  - url: http://localhost:3000
+  # - url: https://example.com/api/v1
+paths:
+  /auth/register:
+    post:
+      $ref: ../swagger/paths/api/auth/register/post.yaml
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
