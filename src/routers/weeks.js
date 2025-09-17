@@ -3,6 +3,7 @@ import { authenticate } from '../middlewares/authenticate.js';
 import { getBabyDetails, getMomDetails, getPrivateWeekInfo, getPublicWeekInfo } from '../controllers/weeks.js';
 
 const weeksRouter = Router();
+// weeksRouter.use(authenticate);
 
 weeksRouter.get('/weeks/public', getPublicWeekInfo);
 
