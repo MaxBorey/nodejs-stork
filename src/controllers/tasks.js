@@ -1,7 +1,6 @@
 import { createTask, getAllTasks, setTaskCompleted} from "../services/tasks.js";
 import { createTaskSchema} from "../validation/tasks.js";
 import { toUtcMidnight } from "../utils/date.js";
-import mongoose from "mongoose";
 
 
 export const postTaskController = async (req, res, next) => {
