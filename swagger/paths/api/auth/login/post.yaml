@@ -53,4 +53,4 @@ responses:
                   description: 'JWT access token (use as Authorization: Bearer <token>)'
                   example: 'YPTyjIni01RTrffjhsLKCEbeOlBG6h3TFXnmXceO'
   '401':
-    $ref: '../../../components/responses/401.yaml'
+    $ref: '../../../../components/responses/401.yaml'

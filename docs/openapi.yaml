@@ -18,6 +18,12 @@ paths:
   /api/auth/register:
     post:
       $ref: ../swagger/paths/api/auth/register/post.yaml
+  /auth/login:
+    post:
+      $ref: ../swagger/paths/api/auth/login/post.yaml
+  /auth/logout:
+    post:
+      $ref: ../swagger/paths/api/auth/logout/post.yaml
 
   /api/weeks/public:
     get:

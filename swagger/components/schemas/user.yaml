@@ -27,6 +27,11 @@ properties:
     writeOnly: true
     pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,72}$'
     example: 'P@ssw0rd1'
+  gender:
+    type: string
+    enum: ['boy', 'girl', 'null']
+    example: 'null'
+    default: 'null'
   createdAt:
     type: string
     format: date-time
