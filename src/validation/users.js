@@ -5,4 +5,5 @@ export const updateUsersMeSchema = Joi.object({
   email: Joi.string().email().trim().optional(),
   gender: Joi.string().valid('boy', 'girl', 'null').optional(),
   dueDate: Joi.string().trim().optional(),
+  photoURL: Joi.string().trim().optional(),
 });
