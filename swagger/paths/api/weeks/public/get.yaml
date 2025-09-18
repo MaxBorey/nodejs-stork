@@ -3,6 +3,7 @@ tags:
 summary: Get public week info
 description: Public endpoint. Returns data only for 1st week of pregnancy (without authorization).
 operationId: getPublicWeekInfo
+security: []
 responses:
   '200':
     description: Success
@@ -18,7 +19,9 @@ responses:
               type: integer
               example: 280
             baby:
-              $ref: ../../../components/schemas/babyState.yaml
+              $ref: ../../../../components/schemas/babyState.yaml
             momTip:
               type: string
               example: 'Зосередьтеся на здоровому харчуванні'
+  '404':
+    $ref: ../../../../components/responses/404.yaml

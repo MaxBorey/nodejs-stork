@@ -20,9 +20,9 @@ responses:
               type: integer
               example: 165
             baby:
-              $ref: ../../../components/schemas/babyState.yaml
+              $ref: ../../../../components/schemas/babyState.yaml
             momTip:
               type: string
               example: 'Слідкуйте за споживанням кальцію'
   '401':
-    $ref: ../../../components/response/401.yaml
+    $ref: ../../../../components/responses/401.yaml

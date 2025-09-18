@@ -18,6 +18,22 @@ paths:
   /api/auth/register:
     post:
       $ref: ../swagger/paths/api/auth/register/post.yaml
+
+  /api/weeks/public:
+    get:
+      $ref: ../swagger/paths/api/weeks/public/get.yaml
+
+  /api/weeks/info:
+    get:
+      $ref: ../swagger/paths/api/weeks/info/get.yaml
+
+  /api/weeks/{week}/baby:
+    get:
+      $ref: ../swagger/paths/api/weeks/baby/get.yaml
+
+  /api/weeks/{week}/mom:
+    get:
+      $ref: ../swagger/paths/api/weeks/mom/get.yaml
 components:
   securitySchemes:
     bearerAuth:

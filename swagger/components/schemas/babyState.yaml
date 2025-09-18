@@ -27,7 +27,8 @@ properties:
     example: 'https://ftp.goit.study/img/lehlehka/6895ce04a5c677999ed2af34.webp'
   momDailyTips:
     type: array
-    items: string
+    items:
+      type: string
     example:
       - 'Не забувайте про зволоження шкіри живота та стегон'
       - 'Влаштуйте собі день релаксу'

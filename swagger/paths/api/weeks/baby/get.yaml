@@ -20,8 +20,8 @@ responses:
     content:
       application/json:
         schema:
-          $ref: ../../../components/schemas/babyState.yaml
+          $ref: ../../../../components/schemas/babyState.yaml
   '404':
-    $ref: ../../../components/response/404.yaml
+    $ref: ../../../../components/responses/404.yaml
   '401':
-    $ref: ../../../components/response/401.yaml
+    $ref: ../../../../components/responses/401.yaml
