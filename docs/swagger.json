@@ -108,6 +108,7 @@
       "post": {
         "tags": ["Tasks"],
         "summary": "Create a new task",
+        "operationId": "createTask",
         "description": "Creates a new task for the authenticated user.",
         "security": [
           {
@@ -166,6 +167,7 @@
       "get": {
         "tags": ["Tasks"],
         "summary": "Get all tasks",
+        "operationId": "getTasks",
         "description": "Retrieves all tasks for the authenticated user.",
         "security": [
           {
@@ -207,6 +209,7 @@
       "patch": {
         "tags": ["Tasks"],
         "summary": "Update task completion status",
+        "operationId": "updateTaskCompletionStatus",
         "description": "Updates a specific task's completion status.",
         "security": [
           {
