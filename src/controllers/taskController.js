@@ -1,21 +1,20 @@
-import createHttpError from 'http-errors';
-import { Task } from '../db/models/task.js';
+import {
+  createTaskService,
+  getTasksService,
+  updateTaskStatusService,
+} from '../services/task.service.js';
 
 export const createTaskController = async (req, res, next) => {
   try {
     const { title, description } = req.body;
     const ownerId = req.user._id;
 
-    const newTask = await Task.create({
-      title,
-      description,
-      owner: ownerId,
-    });
+    const task = await createTaskService({ title, description, ownerId });
 
     res.status(201).json({
       status: 201,
       message: 'Task created successfully!',
-      data: newTask,
+      data: task,
     });
   } catch (error) {
     next(error);
@@ -25,7 +24,7 @@ export const createTaskController = async (req, res, next) => {
 export const getTasksController = async (req, res, next) => {
   try {
     const ownerId = req.user._id;
-    const tasks = await Task.find({ owner: ownerId }).sort({ createdAt: -1 });
+    const tasks = await getTasksService(ownerId);
 
     res.status(200).json({
       status: 200,
@@ -43,18 +42,11 @@ export const updateTaskStatusController = async (req, res, next) => {
     const { status } = req.body;
     const ownerId = req.user._id;
 
-    const updatedTask = await Task.findOneAndUpdate(
-      { _id: taskId, owner: ownerId },
-      { status },
-      { new: true, runValidators: true },
-    );
-
-    if (!updatedTask) {
-      throw createHttpError(
-        404,
-        'Task not found or you do not have permission to update it.',
-      );
-    }
+    const updatedTask = await updateTaskStatusService({
+      taskId,
+      status,
+      ownerId,
+    });
 
     res.status(200).json({
       status: 200,
