@@ -1,0 +1,28 @@
+type: object
+properties:
+  week:
+    type: integer
+    example: 14
+  feelings:
+    type: object
+    properties:
+      states:
+        type: array
+        items:
+          type: string
+        example: ['Закладеність носа', 'Прилив сил', 'Ріст живота']
+      sensationDescr:
+        type: string
+        example: 'Ви можете помітити, що вам стало важче дихати носом'
+  comfortTips:
+    type: array
+    items:
+      type: object
+      properties:
+        category:
+          type: string
+          enum: ['Харчування', 'Активність', 'Відпочинок та комфорт']
+          example: 'Харчування'
+        tip:
+          type: string
+          example: 'Додайте до раціону продукти, багаті на Омега-3'
