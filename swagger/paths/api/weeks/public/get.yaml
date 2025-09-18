@@ -1,0 +1,24 @@
+tags:
+  - Weeks
+summary: Get public week info
+description: Public endpoint. Returns data only for 1st week of pregnancy (without authorization).
+operationId: getPublicWeekInfo
+responses:
+  '200':
+    description: Success
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            week:
+              type: integer
+              example: 1
+            daysUntilDue:
+              type: integer
+              example: 280
+            baby:
+              $ref: ../../../components/schemas/babyState.yaml
+            momTip:
+              type: string
+              example: 'Зосередьтеся на здоровому харчуванні'

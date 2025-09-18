@@ -1,0 +1,27 @@
+tags:
+  - Weeks
+summary: Get baby details by week
+description: Private endpoint. Returns data about the baby's development for the selected week.
+operationId: getBabyDetails
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: week
+    required: true
+    schema:
+      type: integer
+      minimum: 1
+      maximum: 42
+    description: Pregnancy week number
+responses:
+  '200':
+    description: Success
+    content:
+      application/json:
+        schema:
+          $ref: ../../../components/schemas/babyState.yaml
+  '404':
+    $ref: ../../../components/response/404.yaml
+  '401':
+    $ref: ../../../components/response/401.yaml

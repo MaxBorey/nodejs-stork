@@ -1,0 +1,28 @@
+tags:
+  - Weeks
+summary: Get private week info
+description: Private endpoint. Returns data about week number, number of days until due, information about baby and tip for mom.
+operationId: getPrivateWeekInfo
+security:
+  - bearerAuth: []
+responses:
+  '200':
+    description: Success
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            week:
+              type: integer
+              example: 14
+            daysUntilDue:
+              type: integer
+              example: 165
+            baby:
+              $ref: ../../../components/schemas/babyState.yaml
+            momTip:
+              type: string
+              example: 'Слідкуйте за споживанням кальцію'
+  '401':
+    $ref: ../../../components/response/401.yaml

@@ -1,0 +1,33 @@
+type: object
+properties:
+  week:
+    type: integer
+    example: 5
+  analogy:
+    type: string
+    example: 'Авокадо'
+  size:
+    type: number
+    example: 12.0
+  weight:
+    type: number
+    example: 45
+  activity:
+    type: string
+    example: 'Мязи обличчя вже працюють'
+  development:
+    type: string
+    example: 'На цьому тижні кісткова система малюка продовжує активно розвиватися'
+  fact:
+    type: string
+    example: 'Серце вашого малюка зараз перекачує близько 25 літрів крові на добу'
+  image:
+    type: string
+    format: url
+    example: 'https://ftp.goit.study/img/lehlehka/6895ce04a5c677999ed2af34.webp'
+  momDailyTips:
+    type: array
+    items: string
+    example:
+      - 'Не забувайте про зволоження шкіри живота та стегон'
+      - 'Влаштуйте собі день релаксу'
