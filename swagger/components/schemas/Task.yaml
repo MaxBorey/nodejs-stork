@@ -11,7 +11,7 @@ properties:
     type: string
     format: date
     example: '2025-09-18'
-  owner:
+  userId:
     type: string
     description: The user ID of the task owner.
     example: 68b328246e5a138b8b59c8ca

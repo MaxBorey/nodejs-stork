@@ -1,38 +1,37 @@
-post:
-  summary: Update task completion status
-  operationId: updateTaskCompletionStatus
-  tags:
-    - Tasks
-  description: Updates a specific task's completion status.
-  security:
-    - bearerAuth: []
-  parameters:
-    - name: taskId
-      in: path
-      required: true
-      schema:
-        type: string
-      description: The ID of the task to update.
-  requestBody:
+tags:
+  - Tasks
+summary: Update task completion status
+operationId: updateTaskCompletionStatus
+description: Updates a specific task's completion status.
+security:
+  - bearerAuth: []
+parameters:
+  - name: taskId
+    in: path
     required: true
+    schema:
+      type: string
+    description: The ID of the task to update.
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - completed
+        properties:
+          completed:
+            type: boolean
+            example: true
+responses:
+  '200':
+    description: Task status updated successfully
     content:
       application/json:
         schema:
-          type: object
-          required:
-            - completed
-          properties:
-            completed:
-              type: boolean
-              example: true
-  responses:
-    '200':
-      description: Task status updated successfully
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Task'
-    '401':
-      $ref: '#/components/responses/Unauthorized'
-    '404':
-      $ref: '#/components/responses/NotFound'
+          $ref: '#/components/schemas/Task'
+  '401':
+    $ref: '#/components/responses/Unauthorized'
+  '404':
+    $ref: '#/components/responses/NotFound'

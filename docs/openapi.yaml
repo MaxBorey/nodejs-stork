@@ -29,6 +29,12 @@ paths:
     get:
       $ref: ../swagger/paths/api/weeks/public/get.yaml
 
+  /api/tasks:
+    get:
+      $ref: ../swagger/paths/api/tasks/get.yaml
+    post:
+      $ref: ../swagger/paths/api/tasks/post.yaml
+
   /api/weeks/info:
     get:
       $ref: ../swagger/paths/api/weeks/info/get.yaml

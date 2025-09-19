@@ -1,28 +1,27 @@
-get:
-  summary: Get all tasks
-  operationId: getTasks
-  tags:
-    - Tasks
-  description: Retrieves all tasks for the authenticated user.
-  security:
-    - bearerAuth: []
-  responses:
-    '200':
-      description: Tasks retrieved successfully
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              status:
-                type: integer
-                example: 200
-              message:
-                type: string
-                example: Successfully found tasks!
-              data:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Task'
-    '401':
-      $ref: '#/components/responses/Unauthorized'
+tags:
+  - Tasks
+summary: Get all tasks
+operationId: getTasks
+description: Retrieves all tasks for the authenticated user
+security:
+  - bearerAuth: []
+responses:
+  '200':
+    description: Successfully found tasks!
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully found tasks!
+            data:
+              type: array
+              items:
+                $ref: '../../../components/schemas/task.yaml'
+  '401':
+    $ref: '../../../components/responses/401.yaml'

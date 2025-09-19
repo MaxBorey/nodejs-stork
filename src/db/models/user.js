@@ -1,4 +1,5 @@
 import { model, Schema } from 'mongoose';
+import { normalizeDateOrThrow } from '../../utils/normalizeDate.js';
 
 const userSchema = new Schema(
   {
@@ -21,8 +22,8 @@ const userSchema = new Schema(
       default: 'null'
     },
     dueDate: {
-      type: String,
-      trim: true
+      type: Date,
+    set: (v) => (v === null || v === '' || v === undefined ? v : normalizeDateOrThrow(v)),
     },
     password: {
       type: String,
