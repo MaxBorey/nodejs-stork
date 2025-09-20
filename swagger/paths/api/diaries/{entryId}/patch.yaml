@@ -1,8 +1,7 @@
-tags:
-  - Diaries
+tags: [Diaries]
 summary: Update a diary entry
 operationId: updateDiaryEntry
-description: 'Updates specific fields of an existing diary entry for the authenticated user.'
+description: Updates specific fields of an existing diary entry for the authenticated user.
 security:
   - bearerAuth: []
 
@@ -10,10 +9,11 @@ parameters:
   - in: path
     name: entryId
     required: true
+    description: The ID of the diary entry to update.
     schema:
       type: string
-      example: 68ce7e3c1d6fd77b8dc5ce7a
-      description: The ID of the diary entry to update
+      pattern: '^[0-9a-fA-F]{24}$' # ← валідний ObjectId
+      example: 68cd0eb8dad8594a727eecbf # ← 24 символи
 
 requestBody:
   required: true
@@ -21,6 +21,8 @@ requestBody:
     application/json:
       schema:
         type: object
+        additionalProperties: false
+        minProperties: 1 # ← достатньо одного поля
         properties:
           title:
             type: string
@@ -30,13 +32,16 @@ requestBody:
             example: Updated description
           date:
             type: string
-            format: date-time
-            example: 2025-09-19T20:45:31.607Z
+            format: date
+            description: Accepts YYYY-MM-DD, DD.MM.YYYY or DD-MM-YYYY.
+            example: '2025-09-19'
           emotions:
             type: array
             items:
               type: string
-              example: 6895bd86a5c677999ed2ae27
+              pattern: '^[0-9a-fA-F]{24}$'
+            example:
+              - 6895bd86a5c677999ed2ae27
 
 responses:
   '200':
@@ -45,10 +50,7 @@ responses:
       application/json:
         schema:
           type: object
-          required:
-            - status
-            - message
-            - data
+          required: [status, message, data]
           properties:
             status:
               type: integer
@@ -58,7 +60,11 @@ responses:
               example: Successfully patched diary entry!
             data:
               $ref: ../../../../components/schemas/diaryEntry.yaml
+  '400':
+    $ref: ../../../../components/responses/400.yaml # invalid id / bad body
   '401':
     $ref: ../../../../components/responses/401.yaml
   '404':
     $ref: ../../../../components/responses/404.yaml
+  '422':
+    $ref: ../../../../components/responses/422.yaml

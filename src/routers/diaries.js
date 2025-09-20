@@ -16,6 +16,6 @@ diariesRouter.patch('/diaries/:entryId', validateBody(updateDiaryEntrySchema),up
 
 diariesRouter.delete('/diaries/:entryId',  deleteDiaryEntryController);
 
-diariesRouter.get('/emotions', getEmotionsController);
+diariesRouter.get('/diaries/emotions', getEmotionsController);
 
 export default diariesRouter;

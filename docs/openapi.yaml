@@ -18,12 +18,20 @@ paths:
   /api/auth/register:
     post:
       $ref: ../swagger/paths/api/auth/register/post.yaml
-  /auth/login:
+  /api/auth/login:
     post:
       $ref: ../swagger/paths/api/auth/login/post.yaml
-  /auth/logout:
+  /api/auth/logout:
     post:
       $ref: ../swagger/paths/api/auth/logout/post.yaml
+
+  /api/users/me:
+    get:
+      $ref: ../swagger/paths/api/users/me/get.yaml
+
+  /api/users/me/{userId}:
+    patch:
+      $ref: ../swagger/paths/api/users/me/{userId}/patch.yaml
 
   /api/weeks/public:
     get:
@@ -34,6 +42,10 @@ paths:
       $ref: ../swagger/paths/api/tasks/get.yaml
     post:
       $ref: ../swagger/paths/api/tasks/post.yaml
+
+  /api/tasks/{taskId}/completed:
+    patch:
+      $ref: ../swagger/paths/api/tasks/{taskId}/complited/patch.yaml
 
   /api/weeks/info:
     get:
@@ -49,9 +61,9 @@ paths:
 
   /api/diaries:
     get:
-      $ref: ../swagger/paths/api/diaries/post.yaml
-    post:
       $ref: ../swagger/paths/api/diaries/get.yaml
+    post:
+      $ref: ../swagger/paths/api/diaries/post.yaml
 
   /api/diaries/{entryId}:
     patch:
@@ -59,9 +71,9 @@ paths:
     delete:
       $ref: ../swagger/paths/api/diaries/{entryId}/delete.yaml
 
-  /api/emotions:
+  /api/diaries/emotions:
     get:
-      $ref: ../swagger/paths/api/emotions/get.yaml
+      $ref: ../swagger/paths/api/diaries/emotions/get.yaml
 
 components:
   securitySchemes:

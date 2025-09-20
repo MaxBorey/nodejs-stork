@@ -1,5 +1,5 @@
 tags:
-  - Emotions
+  - Diaries
 summary: Get all emotions
 operationId: getEmotions
 description: Returns a list of all available emotions.
@@ -27,7 +27,7 @@ responses:
             data:
               type: array
               items:
-                $ref: ../../../components/schemas/emotions.yaml
+                $ref: ../../../../components/schemas/emotions.yaml
 
   '401':
-    $ref: ../../../components/responses/401.yaml
+    $ref: ../../../../components/responses/401.yaml

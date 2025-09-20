@@ -1,0 +1,60 @@
+tags: [Users]
+summary: Get current user profile
+operationId: getUsersMe
+description: Returns the currently authenticated user's profile.
+security:
+  - bearerAuth: []
+
+responses:
+  '200':
+    description: Current user profile
+    content:
+      application/json:
+        schema:
+          type: object
+          additionalProperties: false
+          required: [_id, name, email, gender, createdAt, updatedAt]
+          properties:
+            _id:
+              type: string
+              description: Mongo ObjectId
+              example: 60c72b2f9b1d9c001f5c8a2b
+            name:
+              type: string
+              example: Jane Doe
+            email:
+              type: string
+              format: email
+              example: jane@example.com
+            gender:
+              type: string
+              enum: [boy, girl, 'null']
+              example: 'null'
+            dueDate:
+              # OpenAPI 3.1: дозволяємо null
+              type: [string, 'null']
+              format: date
+              example: '2025-12-31'
+            photoURL:
+              type: [string, 'null']
+              example: 'https://res.cloudinary.com/demo/image/upload/v12345/photo.jpg'
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+        examples:
+          sample:
+            value:
+              _id: 60c72b2f9b1d9c001f5c8a2b
+              name: Jane Doe
+              email: jane@example.com
+              gender: 'boy'
+              dueDate: '2025-12-31'
+              photoURL: string
+              createdAt: '2025-09-01T10:15:00.000Z'
+              updatedAt: '2025-09-10T12:30:00.000Z'
+
+  '401':
+    $ref: ../../../../components/responses/401.yaml

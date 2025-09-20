@@ -1,10 +1,37 @@
-tags:
-  - Diaries
+tags: [Diaries]
 summary: Get all diary entries of the current user
 operationId: getUserDiaries
 description: Returns a paginated list of diary entries for the authenticated user.
 security:
   - bearerAuth: []
+
+parameters:
+  - name: page
+    in: query
+    schema: { type: integer, minimum: 1, default: 1 }
+    description: Page number (starts at 1).
+  - name: limit
+    in: query
+    schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+    description: Items per page.
+  - name: from
+    in: query
+    schema: { type: string, format: date }
+    description: Filter entries created on/after this date (YYYY-MM-DD).
+  - name: to
+    in: query
+    schema: { type: string, format: date }
+    description: Filter entries created on/before this date (YYYY-MM-DD).
+  - name: emotions
+    in: query
+    description: Filter by emotion ids. Repeat the parameter for multiple values.
+    schema:
+      type: array
+      items:
+        type: string
+        pattern: '^[0-9a-fA-F]{24}$'
+    style: form
+    explode: true
 
 responses:
   '200':
@@ -13,10 +40,7 @@ responses:
       application/json:
         schema:
           type: object
-          required:
-            - status
-            - message
-            - data
+          required: [status, message, data]
           properties:
             status:
               type: integer
@@ -25,8 +49,21 @@ responses:
               type: string
               example: Successfully fetched diary entries!
             data:
-              type: array
-              items:
-                $ref: ../../../components/schemas/diaryEntry.yaml
+              type: object
+              required: [items, page, limit, total]
+              properties:
+                items:
+                  type: array
+                  items:
+                    $ref: ../../../components/schemas/diaryEntry.yaml
+                page:
+                  type: integer
+                  example: 1
+                limit:
+                  type: integer
+                  example: 20
+                total:
+                  type: integer
+                  example: 57
   '401':
     $ref: ../../../components/responses/401.yaml

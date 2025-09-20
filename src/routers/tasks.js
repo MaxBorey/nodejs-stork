@@ -21,7 +21,7 @@ tasksRouter.get(
 );
 
 tasksRouter.patch(
-'/tasks/:taskId/complited',
+'/tasks/:taskId/completed',
 setCompletedController);
 
 export default tasksRouter;
