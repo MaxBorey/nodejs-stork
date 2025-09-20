@@ -1,0 +1,32 @@
+tags:
+  - Diaries
+summary: Get all diary entries of the current user
+operationId: getUserDiaries
+description: Returns a paginated list of diary entries for the authenticated user.
+security:
+  - bearerAuth: []
+
+responses:
+  '200':
+    description: Successfully fetched diary entries!
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully fetched diary entries!
+            data:
+              type: array
+              items:
+                $ref: ../../../components/schemas/diaryEntry.yaml
+  '401':
+    $ref: ../../../components/responses/401.yaml

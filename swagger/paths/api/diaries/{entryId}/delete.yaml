@@ -1,0 +1,24 @@
+tags:
+  - Diaries
+summary: Delete a diary entry
+operationId: deleteDiaryEntry
+description: Deletes a specific diary entry for the authenticated user.
+security:
+  - bearerAuth: []
+
+parameters:
+  - in: path
+    name: entryId
+    required: true
+    schema:
+      type: string
+      example: 68ce8209f05846159122e8c
+    description: The ID of the diary entry to delete
+
+responses:
+  '204':
+    description: Diary entry successfully deleted (no content returned)
+  '401':
+    $ref: ../../../../components/responses/401.yaml
+  '404':
+    $ref: ../../../../components/responses/404.yaml

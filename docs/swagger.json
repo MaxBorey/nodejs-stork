@@ -22,16 +22,14 @@
     {
       "name": "Auth",
       "description": "Auth operations."
-    },
-    {
-      "name": "Tasks",
-      "description": "Task management operations."
     }
   ],
   "paths": {
     "/api/auth/register": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Register user",
         "operationId": "registerUser",
         "description": "Register user",
@@ -47,7 +45,11 @@
               "schema": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["name", "email", "password"],
+                "required": [
+                  "name",
+                  "email",
+                  "password"
+                ],
                 "properties": {
                   "name": {
                     "type": "string",
@@ -77,7 +79,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "message", "data"],
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -104,9 +110,207 @@
         }
       }
     },
-    "/api/tasks": {
+    "/auth/login": {
       "post": {
-        "tags": ["Tasks"],
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login user",
+        "operationId": "loginUser",
+        "description": "Login user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "maxLength": 128,
+                    "writeOnly": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully logged in an user!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "accessToken"
+                      ],
+                      "properties": {
+                        "accessToken": {
+                          "type": "string",
+                          "description": "JWT access token (use as Authorization: Bearer <token>)",
+                          "example": "YPTyjIni01RTrffjhsLKCEbeOlBG6h3TFXnmXceO"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Logout user",
+        "operationId": "logoutUser",
+        "description": "Logout user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Logout user"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
+    "/api/weeks/public": {
+      "get": {
+        "tags": [
+          "Weeks"
+        ],
+        "summary": "Get public week info",
+        "description": "Public endpoint. Returns data only for 1st week of pregnancy (without authorization).",
+        "operationId": "getPublicWeekInfo",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "week": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "daysUntilDue": {
+                      "type": "integer",
+                      "example": 280
+                    },
+                    "baby": {
+                      "$ref": "#/components/schemas/babyState"
+                    },
+                    "momTip": {
+                      "type": "string",
+                      "example": "Зосередьтеся на здоровому харчуванні"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
+    "/api/tasks": {
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Get all tasks",
+        "operationId": "getTasks",
+        "description": "Retrieves all tasks for the authenticated user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully found tasks!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully found tasks!"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/task"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
         "summary": "Create a new task",
         "operationId": "createTask",
         "description": "Creates a new task for the authenticated user.",
@@ -121,7 +325,10 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["title", "date"],
+                "required": [
+                  "title",
+                  "date"
+                ],
                 "properties": {
                   "title": {
                     "type": "string",
@@ -143,16 +350,224 @@
             "content": {
               "application/json": {
                 "schema": {
+                  "$ref": "#/components/schemas/task"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
+    "/api/weeks/info": {
+      "get": {
+        "tags": [
+          "Weeks"
+        ],
+        "summary": "Get private week info",
+        "description": "Private endpoint. Returns data about week number, number of days until due, information about baby and tip for mom.",
+        "operationId": "getPrivateWeekInfo",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "week": {
+                      "type": "integer",
+                      "example": 14
+                    },
+                    "daysUntilDue": {
+                      "type": "integer",
+                      "example": 165
+                    },
+                    "baby": {
+                      "$ref": "#/components/schemas/babyState"
+                    },
+                    "momTip": {
+                      "type": "string",
+                      "example": "Слідкуйте за споживанням кальцію"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
+    "/api/weeks/{week}/baby": {
+      "get": {
+        "tags": [
+          "Weeks"
+        ],
+        "summary": "Get baby details by week",
+        "description": "Private endpoint. Returns data about the baby's development for the selected week.",
+        "operationId": "getBabyDetails",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "week",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 42
+            },
+            "description": "Pregnancy week number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/babyState"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
+    "/api/weeks/{week}/mom": {
+      "get": {
+        "tags": [
+          "Weeks"
+        ],
+        "summary": "Get mom details by week",
+        "description": "Private endpoint. Returns data about the mother's body for the selected week.",
+        "operationId": "getMomDetails",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "week",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 42
+            },
+            "description": "Pregnancy week number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/momState"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
+    "/api/diaries": {
+      "get": {
+        "tags": [
+          "Diaries"
+        ],
+        "summary": "Create a new diary entry",
+        "operationId": "createDiaryEntry",
+        "description": "Creates a new diary entry for the authenticated user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "description",
+                  "emotions"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "A wonderful day"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "I had a great walk in the park, enjoyed the sunshine, and felt really happy and relaxed."
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-09-19T20:45:31.607Z"
+                  },
+                  "emotions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "6895bd86a5c677999ed2ae27"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created an entry",
+            "content": {
+              "application/json": {
+                "schema": {
                   "type": "object",
                   "properties": {
                     "status": {
-                      "type": "integer"
+                      "type": "integer",
+                      "example": 201
                     },
                     "message": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "Successfully created an Entry!"
                     },
                     "data": {
-                      "$ref": "#/components/schemas/task"
+                      "$ref": "#/components/schemas/diaryEntry"
                     }
                   }
                 }
@@ -164,11 +579,13 @@
           }
         }
       },
-      "get": {
-        "tags": ["Tasks"],
-        "summary": "Get all tasks",
-        "operationId": "getTasks",
-        "description": "Retrieves all tasks for the authenticated user.",
+      "post": {
+        "tags": [
+          "Diaries"
+        ],
+        "summary": "Get all diary entries of the current user",
+        "operationId": "getUserDiaries",
+        "description": "Returns a paginated list of diary entries for the authenticated user.",
         "security": [
           {
             "bearerAuth": []
@@ -176,22 +593,29 @@
         ],
         "responses": {
           "200": {
-            "description": "Tasks retrieved successfully",
+            "description": "Successfully fetched diary entries!",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
                   "properties": {
                     "status": {
-                      "type": "integer"
+                      "type": "integer",
+                      "example": 200
                     },
                     "message": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "Successfully fetched diary entries!"
                     },
                     "data": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/task"
+                        "$ref": "#/components/schemas/diaryEntry"
                       }
                     }
                   }
@@ -205,12 +629,14 @@
         }
       }
     },
-    "/api/tasks/{taskId}/completed": {
+    "/api/diaries/{entryId}": {
       "patch": {
-        "tags": ["Tasks"],
-        "summary": "Update task completion status",
-        "operationId": "updateTaskCompletionStatus",
-        "description": "Updates a specific task's completion status.",
+        "tags": [
+          "Diaries"
+        ],
+        "summary": "Update a diary entry",
+        "operationId": "updateDiaryEntry",
+        "description": "Updates specific fields of an existing diary entry for the authenticated user.",
         "security": [
           {
             "bearerAuth": []
@@ -218,13 +644,14 @@
         ],
         "parameters": [
           {
-            "name": "taskId",
             "in": "path",
+            "name": "entryId",
             "required": true,
             "schema": {
-              "type": "string"
-            },
-            "description": "The ID of the task to update."
+              "type": "string",
+              "example": "68ce7e3c1d6fd77b8dc5ce7a",
+              "description": "The ID of the diary entry to update"
+            }
           }
         ],
         "requestBody": {
@@ -233,11 +660,26 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["completed"],
                 "properties": {
-                  "completed": {
-                    "type": "boolean",
-                    "example": true
+                  "title": {
+                    "type": "string",
+                    "example": "Updated title"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Updated description"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-09-19T20:45:31.607Z"
+                  },
+                  "emotions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "6895bd86a5c677999ed2ae27"
+                    }
                   }
                 }
               }
@@ -246,20 +688,27 @@
         },
         "responses": {
           "200": {
-            "description": "Task status updated successfully",
+            "description": "Successfully patched diary entry!",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
                   "properties": {
                     "status": {
-                      "type": "integer"
+                      "type": "integer",
+                      "example": 200
                     },
                     "message": {
-                      "type": "string"
+                      "type": "string",
+                      "example": "Successfully patched diary entry!"
                     },
                     "data": {
-                      "$ref": "#/components/schemas/task"
+                      "$ref": "#/components/schemas/diaryEntry"
                     }
                   }
                 }
@@ -271,6 +720,93 @@
           },
           "404": {
             "$ref": "#/components/responses/404"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Diaries"
+        ],
+        "summary": "Delete a diary entry",
+        "operationId": "deleteDiaryEntry",
+        "description": "Deletes a specific diary entry for the authenticated user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "entryId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "68ce8209f05846159122e8c"
+            },
+            "description": "The ID of the diary entry to delete"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Diary entry successfully deleted (no content returned)"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
+    "/api/emotions": {
+      "get": {
+        "tags": [
+          "Emotions"
+        ],
+        "summary": "Get all emotions",
+        "operationId": "getEmotions",
+        "description": "Returns a list of all available emotions.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched emotions!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully fetched emotions!"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/emotions"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
           }
         }
       }
@@ -318,6 +854,16 @@
             "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,72}$",
             "example": "P@ssw0rd1"
           },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "boy",
+              "girl",
+              "null"
+            ],
+            "example": "null",
+            "default": "null"
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time",
@@ -327,6 +873,54 @@
             "type": "string",
             "format": "date-time",
             "readOnly": true
+          }
+        }
+      },
+      "babyState": {
+        "type": "object",
+        "properties": {
+          "week": {
+            "type": "integer",
+            "example": 5
+          },
+          "analogy": {
+            "type": "string",
+            "example": "Авокадо"
+          },
+          "size": {
+            "type": "number",
+            "example": 12
+          },
+          "weight": {
+            "type": "number",
+            "example": 45
+          },
+          "activity": {
+            "type": "string",
+            "example": "Мязи обличчя вже працюють"
+          },
+          "development": {
+            "type": "string",
+            "example": "На цьому тижні кісткова система малюка продовжує активно розвиватися"
+          },
+          "fact": {
+            "type": "string",
+            "example": "Серце вашого малюка зараз перекачує близько 25 літрів крові на добу"
+          },
+          "image": {
+            "type": "string",
+            "format": "url",
+            "example": "https://ftp.goit.study/img/lehlehka/6895ce04a5c677999ed2af34.webp"
+          },
+          "momDailyTips": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Не забувайте про зволоження шкіри живота та стегон",
+              "Влаштуйте собі день релаксу"
+            ]
           }
         }
       },
@@ -347,8 +941,9 @@
             "format": "date",
             "example": "2025-09-18"
           },
-          "owner": {
+          "userId": {
             "type": "string",
+            "description": "The user ID of the task owner.",
             "example": "68b328246e5a138b8b59c8ca"
           },
           "completed": {
@@ -364,6 +959,125 @@
             "format": "date-time"
           }
         }
+      },
+      "momState": {
+        "type": "object",
+        "properties": {
+          "week": {
+            "type": "integer",
+            "example": 14
+          },
+          "feelings": {
+            "type": "object",
+            "properties": {
+              "states": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "Закладеність носа",
+                  "Прилив сил",
+                  "Ріст живота"
+                ]
+              },
+              "sensationDescr": {
+                "type": "string",
+                "example": "Ви можете помітити, що вам стало важче дихати носом"
+              }
+            }
+          },
+          "comfortTips": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "Харчування",
+                    "Активність",
+                    "Відпочинок та комфорт"
+                  ],
+                  "example": "Харчування"
+                },
+                "tip": {
+                  "type": "string",
+                  "example": "Додайте до раціону продукти, багаті на Омега-3"
+                }
+              }
+            }
+          }
+        }
+      },
+      "diaryEntry": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "68cd0eb8dad8594a727eecb"
+          },
+          "title": {
+            "type": "string",
+            "example": "A wonderful day"
+          },
+          "description": {
+            "type": "string",
+            "example": "I had a great walk in the park, enjoyed the sunshine, and felt really happy and relaxed."
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-09-19T20:45:31.607Z"
+          },
+          "userId": {
+            "type": "string",
+            "example": "68caf43ae72474007ccba4c4"
+          },
+          "emotions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string",
+                  "example": "6895bd86a5c677999ed2ae27"
+                },
+                "title": {
+                  "type": "string",
+                  "example": "Joy"
+                }
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-09-19T20:45:31.615Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-09-19T20:45:31.615Z"
+          }
+        }
+      },
+      "emotions": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "6895bd86a5c677999ed2ae14"
+          },
+          "title": {
+            "type": "string",
+            "example": "Joi"
+          }
+        },
+        "required": [
+          "_id",
+          "title"
+        ]
       }
     },
     "responses": {
@@ -373,7 +1087,11 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "required": ["status", "message", "data"],
+              "required": [
+                "status",
+                "message",
+                "data"
+              ],
               "properties": {
                 "status": {
                   "type": "integer",
@@ -385,11 +1103,50 @@
                 },
                 "data": {
                   "type": "object",
-                  "required": ["message"],
+                  "required": [
+                    "message"
+                  ],
                   "properties": {
                     "message": {
                       "type": "string",
                       "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Not found error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "message",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 404
+                },
+                "message": {
+                  "type": "string",
+                  "example": "NotFoundError"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "message"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Not found"
                     }
                   }
                 }
@@ -404,7 +1161,11 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "required": ["status", "message", "data"],
+              "required": [
+                "status",
+                "message",
+                "data"
+              ],
               "properties": {
                 "status": {
                   "type": "integer",
@@ -416,33 +1177,15 @@
                 },
                 "data": {
                   "type": "object",
-                  "required": ["message"],
+                  "required": [
+                    "message"
+                  ],
                   "properties": {
                     "message": {
                       "type": "string",
                       "example": "Conflict"
                     }
                   }
-                }
-              }
-            }
-          }
-        }
-      },
-      "404": {
-        "description": "Not Found error",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "status": {
-                  "type": "integer",
-                  "example": 404
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Not Found"
                 }
               }
             }

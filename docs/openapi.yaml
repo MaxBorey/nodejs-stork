@@ -46,6 +46,23 @@ paths:
   /api/weeks/{week}/mom:
     get:
       $ref: ../swagger/paths/api/weeks/mom/get.yaml
+
+  /api/diaries:
+    get:
+      $ref: ../swagger/paths/api/diaries/post.yaml
+    post:
+      $ref: ../swagger/paths/api/diaries/get.yaml
+
+  /api/diaries/{entryId}:
+    patch:
+      $ref: ../swagger/paths/api/diaries/{entryId}/patch.yaml
+    delete:
+      $ref: ../swagger/paths/api/diaries/{entryId}/delete.yaml
+
+  /api/emotions:
+    get:
+      $ref: ../swagger/paths/api/emotions/get.yaml
+
 components:
   securitySchemes:
     bearerAuth:
