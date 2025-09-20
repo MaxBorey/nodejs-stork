@@ -36,4 +36,4 @@ const diarieSchema = new mongoose.Schema(
 );
 
 export const EmotionCollection = model('Emotions', emotionSchema);
-export const DiarieNotesCollection = model('Diarie', diarieSchema);
+export const DiarieEntriesCollection = model('Diarie', diarieSchema);
