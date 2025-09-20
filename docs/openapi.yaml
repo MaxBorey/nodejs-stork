@@ -49,9 +49,9 @@ paths:
 
   /api/diaries:
     get:
-      $ref: ../swagger/paths/api/diaries/post.yaml
-    post:
       $ref: ../swagger/paths/api/diaries/get.yaml
+    post:
+      $ref: ../swagger/paths/api/diaries/post.yaml
 
   /api/diaries/{entryId}:
     patch:
