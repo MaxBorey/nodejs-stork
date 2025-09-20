@@ -1,0 +1,51 @@
+tags:
+  - Diaries
+summary: Create a new diary entry
+operationId: createDiaryEntry
+description: Creates a new diary entry for the authenticated user.
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - title
+          - description
+          - emotions
+        properties:
+          title:
+            type: string
+            example: A wonderful day
+          description:
+            type: string
+            example: I had a great walk in the park, enjoyed the sunshine, and felt really happy and relaxed.
+          date:
+            type: string
+            format: date-time
+            example: 2025-09-19T20:45:31.607Z
+          emotions:
+            type: array
+            items:
+              type: string
+              example: 6895bd86a5c677999ed2ae27
+responses:
+  '201':
+    description: Successfully created an entry
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: Successfully created an Entry!
+            data:
+              $ref: ../../../components/schemas/diaryEntry.yaml
+  '401':
+    $ref: ../../../components/responses/401.yaml

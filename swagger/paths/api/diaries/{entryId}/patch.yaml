@@ -1,0 +1,70 @@
+tags: [Diaries]
+summary: Update a diary entry
+operationId: updateDiaryEntry
+description: Updates specific fields of an existing diary entry for the authenticated user.
+security:
+  - bearerAuth: []
+
+parameters:
+  - in: path
+    name: entryId
+    required: true
+    description: The ID of the diary entry to update.
+    schema:
+      type: string
+      pattern: '^[0-9a-fA-F]{24}$' # ← валідний ObjectId
+      example: 68cd0eb8dad8594a727eecbf # ← 24 символи
+
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        additionalProperties: false
+        minProperties: 1 # ← достатньо одного поля
+        properties:
+          title:
+            type: string
+            example: Updated title
+          description:
+            type: string
+            example: Updated description
+          date:
+            type: string
+            format: date
+            description: Accepts YYYY-MM-DD, DD.MM.YYYY or DD-MM-YYYY.
+            example: '2025-09-19'
+          emotions:
+            type: array
+            items:
+              type: string
+              pattern: '^[0-9a-fA-F]{24}$'
+            example:
+              - 6895bd86a5c677999ed2ae27
+
+responses:
+  '200':
+    description: Successfully patched diary entry!
+    content:
+      application/json:
+        schema:
+          type: object
+          required: [status, message, data]
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully patched diary entry!
+            data:
+              $ref: ../../../../components/schemas/diaryEntry.yaml
+  '400':
+    $ref: ../../../../components/responses/400.yaml # invalid id / bad body
+  '401':
+    $ref: ../../../../components/responses/401.yaml
+  '404':
+    $ref: ../../../../components/responses/404.yaml
+  '422':
+    $ref: ../../../../components/responses/422.yaml

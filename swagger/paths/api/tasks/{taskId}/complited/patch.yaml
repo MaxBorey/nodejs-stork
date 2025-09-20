@@ -1,0 +1,51 @@
+tags: [Tasks]
+summary: Update task completion status
+operationId: updateTaskCompletionStatus
+description: Updates a specific task's completion status.
+security:
+  - bearerAuth: []
+parameters:
+  - name: taskId
+    in: path
+    required: true
+    schema:
+      type: string
+      pattern: '^[0-9a-fA-F]{24}$'
+    description: The ID of the task to update.
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        additionalProperties: false
+        required: [completed]
+        properties:
+          completed:
+            type: boolean
+            example: true
+responses:
+  '200':
+    description: Task status updated successfully
+    content:
+      application/json:
+        schema:
+          type: object
+          required: [status, message, data]
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Task status updated successfully!
+            data:
+              $ref: '../../../../../components/schemas/task.yaml'
+  '401':
+    $ref: '../../../../../components/responses/401.yaml'
+  '404':
+    $ref: '../../../../../components/responses/404.yaml'
+  '400':
+    $ref: '../../../../../components/responses/400.yaml'
+  '422':
+    $ref: '../../../../../components/responses/422.yaml'

@@ -1,0 +1,39 @@
+type: object
+description: Task entity
+additionalProperties: false
+required:
+  - _id
+  - title
+  - date
+  - userId
+  - completed
+  - createdAt
+  - updatedAt
+properties:
+  _id:
+    type: string
+    description: Mongo ObjectId
+    example: 60c72b2f9b1d9c001f5c8a2b
+  title:
+    type: string
+    minLength: 1
+    maxLength: 160
+    example: Buy groceries
+  date:
+    type: string
+    format: date-time
+    example: '2025-09-18T00:00:00.000Z'
+  userId:
+    type: string
+    description: The user ID of the task owner.
+    pattern: '^[0-9a-fA-F]{24}$'
+    example: 68b328246e5a138b8b59c8ca
+  completed:
+    type: boolean
+    example: false
+  createdAt:
+    type: string
+    format: date-time
+  updatedAt:
+    type: string
+    format: date-time

@@ -18,6 +18,63 @@ paths:
   /api/auth/register:
     post:
       $ref: ../swagger/paths/api/auth/register/post.yaml
+  /api/auth/login:
+    post:
+      $ref: ../swagger/paths/api/auth/login/post.yaml
+  /api/auth/logout:
+    post:
+      $ref: ../swagger/paths/api/auth/logout/post.yaml
+
+  /api/users/me:
+    get:
+      $ref: ../swagger/paths/api/users/me/get.yaml
+
+  /api/users/me/{userId}:
+    patch:
+      $ref: ../swagger/paths/api/users/me/{userId}/patch.yaml
+
+  /api/weeks/public:
+    get:
+      $ref: ../swagger/paths/api/weeks/public/get.yaml
+
+  /api/tasks:
+    get:
+      $ref: ../swagger/paths/api/tasks/get.yaml
+    post:
+      $ref: ../swagger/paths/api/tasks/post.yaml
+
+  /api/tasks/{taskId}/completed:
+    patch:
+      $ref: ../swagger/paths/api/tasks/{taskId}/complited/patch.yaml
+
+  /api/weeks/info:
+    get:
+      $ref: ../swagger/paths/api/weeks/info/get.yaml
+
+  /api/weeks/{week}/baby:
+    get:
+      $ref: ../swagger/paths/api/weeks/baby/get.yaml
+
+  /api/weeks/{week}/mom:
+    get:
+      $ref: ../swagger/paths/api/weeks/mom/get.yaml
+
+  /api/diaries:
+    get:
+      $ref: ../swagger/paths/api/diaries/get.yaml
+    post:
+      $ref: ../swagger/paths/api/diaries/post.yaml
+
+  /api/diaries/{entryId}:
+    patch:
+      $ref: ../swagger/paths/api/diaries/{entryId}/patch.yaml
+    delete:
+      $ref: ../swagger/paths/api/diaries/{entryId}/delete.yaml
+
+  /api/diaries/emotions:
+    get:
+      $ref: ../swagger/paths/api/diaries/emotions/get.yaml
+
 components:
   securitySchemes:
     bearerAuth:

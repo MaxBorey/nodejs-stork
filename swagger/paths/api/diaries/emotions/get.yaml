@@ -1,0 +1,33 @@
+tags:
+  - Diaries
+summary: Get all emotions
+operationId: getEmotions
+description: Returns a list of all available emotions.
+security:
+  - bearerAuth: []
+
+responses:
+  '200':
+    description: Successfully fetched emotions!
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully fetched emotions!
+            data:
+              type: array
+              items:
+                $ref: ../../../../components/schemas/emotions.yaml
+
+  '401':
+    $ref: ../../../../components/responses/401.yaml

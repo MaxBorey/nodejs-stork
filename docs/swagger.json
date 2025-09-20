@@ -109,6 +109,1189 @@
           }
         }
       }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login user",
+        "operationId": "loginUser",
+        "description": "Login user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "maxLength": 128,
+                    "writeOnly": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully logged in an user!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "accessToken"
+                      ],
+                      "properties": {
+                        "accessToken": {
+                          "type": "string",
+                          "description": "JWT access token (use as Authorization: Bearer <token>)",
+                          "example": "YPTyjIni01RTrffjhsLKCEbeOlBG6h3TFXnmXceO"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Logout user",
+        "operationId": "logoutUser",
+        "description": "Logout user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Logout user"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
+    "/api/users/me": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get current user profile",
+        "operationId": "getUsersMe",
+        "description": "Returns the currently authenticated user's profile.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current user profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "_id",
+                    "name",
+                    "email",
+                    "gender",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "description": "Mongo ObjectId",
+                      "example": "60c72b2f9b1d9c001f5c8a2b"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Jane Doe"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email",
+                      "example": "jane@example.com"
+                    },
+                    "gender": {
+                      "type": "string",
+                      "enum": [
+                        "boy",
+                        "girl",
+                        "null"
+                      ],
+                      "example": "null"
+                    },
+                    "dueDate": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date",
+                      "example": "2025-12-31"
+                    },
+                    "photoURL": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "example": "https://res.cloudinary.com/demo/image/upload/v12345/photo.jpg"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                },
+                "examples": {
+                  "sample": {
+                    "value": {
+                      "_id": "60c72b2f9b1d9c001f5c8a2b",
+                      "name": "Jane Doe",
+                      "email": "jane@example.com",
+                      "gender": "boy",
+                      "dueDate": "2025-12-31",
+                      "photoURL": "string",
+                      "createdAt": "2025-09-01T10:15:00.000Z",
+                      "updatedAt": "2025-09-10T12:30:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
+    "/api/users/me/{userId}": {
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update current user profile",
+        "operationId": "updateUsersMe",
+        "description": "Updates the authenticated user's profile. Use `multipart/form-data` when uploading an avatar in field `photoURL`.\n",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the user to update.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "minProperties": 1,
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Jane Doe"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "jane@example.com"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": [
+                      "boy",
+                      "girl",
+                      "null"
+                    ],
+                    "example": "null"
+                  },
+                  "dueDate": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Accepts YYYY-MM-DD, DD.MM.YYYY or DD-MM-YYYY.",
+                    "example": "2025-12-31"
+                  },
+                  "photoURL": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "photoURL": {
+                  "contentType": "image/jpeg, image/png"
+                }
+              }
+            },
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "minProperties": 1,
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": [
+                      "boy",
+                      "girl",
+                      "null"
+                    ]
+                  },
+                  "dueDate": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Accepts YYYY-MM-DD, DD.MM.YYYY or DD-MM-YYYY."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User profile updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User profile updated successfully!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "_id",
+                        "name",
+                        "email",
+                        "gender",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "properties": {
+                        "_id": {
+                          "type": "string",
+                          "example": "60c72b2f9b1d9c001f5c8a2b"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Jane Doe"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "example": "jane@example.com"
+                        },
+                        "gender": {
+                          "type": "string",
+                          "enum": [
+                            "boy",
+                            "girl",
+                            "null"
+                          ],
+                          "example": "null"
+                        },
+                        "dueDate": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "format": "date",
+                          "example": "2025-12-31"
+                        },
+                        "photoURL": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "example": "https://res.cloudinary.com/demo/image/upload/v12345/photo.jpg"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "422": {
+            "$ref": "#/components/responses/422"
+          }
+        }
+      }
+    },
+    "/api/weeks/public": {
+      "get": {
+        "tags": [
+          "Weeks"
+        ],
+        "summary": "Get public week info",
+        "description": "Public endpoint. Returns data only for 1st week of pregnancy (without authorization).",
+        "operationId": "getPublicWeekInfo",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "week": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "daysUntilDue": {
+                      "type": "integer",
+                      "example": 280
+                    },
+                    "baby": {
+                      "$ref": "#/components/schemas/babyState"
+                    },
+                    "momTip": {
+                      "type": "string",
+                      "example": "Зосередьтеся на здоровому харчуванні"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
+    "/api/tasks": {
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Get all tasks",
+        "operationId": "getTasks",
+        "description": "Retrieves all tasks for the authenticated user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully found tasks!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully found tasks!"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/task"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Create a new task",
+        "operationId": "createTask",
+        "description": "Creates a new task for the authenticated user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "date"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "Buy groceries"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2025-09-18"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Task created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/task"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
+    "/api/tasks/{taskId}/completed": {
+      "patch": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Update task completion status",
+        "operationId": "updateTaskCompletionStatus",
+        "description": "Updates a specific task's completion status.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$"
+            },
+            "description": "The ID of the task to update."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "completed"
+                ],
+                "properties": {
+                  "completed": {
+                    "type": "boolean",
+                    "example": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Task status updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Task status updated successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/task"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "422": {
+            "$ref": "#/components/responses/422"
+          }
+        }
+      }
+    },
+    "/api/weeks/info": {
+      "get": {
+        "tags": [
+          "Weeks"
+        ],
+        "summary": "Get private week info",
+        "description": "Private endpoint. Returns data about week number, number of days until due, information about baby and tip for mom.",
+        "operationId": "getPrivateWeekInfo",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "week": {
+                      "type": "integer",
+                      "example": 14
+                    },
+                    "daysUntilDue": {
+                      "type": "integer",
+                      "example": 165
+                    },
+                    "baby": {
+                      "$ref": "#/components/schemas/babyState"
+                    },
+                    "momTip": {
+                      "type": "string",
+                      "example": "Слідкуйте за споживанням кальцію"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
+    "/api/weeks/{week}/baby": {
+      "get": {
+        "tags": [
+          "Weeks"
+        ],
+        "summary": "Get baby details by week",
+        "description": "Private endpoint. Returns data about the baby's development for the selected week.",
+        "operationId": "getBabyDetails",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "week",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 42
+            },
+            "description": "Pregnancy week number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/babyState"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
+    "/api/weeks/{week}/mom": {
+      "get": {
+        "tags": [
+          "Weeks"
+        ],
+        "summary": "Get mom details by week",
+        "description": "Private endpoint. Returns data about the mother's body for the selected week.",
+        "operationId": "getMomDetails",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "week",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 42
+            },
+            "description": "Pregnancy week number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/momState"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
+    "/api/diaries": {
+      "get": {
+        "tags": [
+          "Diaries"
+        ],
+        "summary": "Get all diary entries of the current user",
+        "operationId": "getUserDiaries",
+        "description": "Returns a paginated list of diary entries for the authenticated user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "description": "Page number (starts at 1)."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "description": "Items per page."
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Filter entries created on/after this date (YYYY-MM-DD)."
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Filter entries created on/before this date (YYYY-MM-DD)."
+          },
+          {
+            "name": "emotions",
+            "in": "query",
+            "description": "Filter by emotion ids. Repeat the parameter for multiple values.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[0-9a-fA-F]{24}$"
+              }
+            },
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched diary entries!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully fetched diary entries!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "items",
+                        "page",
+                        "limit",
+                        "total"
+                      ],
+                      "properties": {
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/diaryEntry"
+                          }
+                        },
+                        "page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "limit": {
+                          "type": "integer",
+                          "example": 20
+                        },
+                        "total": {
+                          "type": "integer",
+                          "example": 57
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Diaries"
+        ],
+        "summary": "Create a new diary entry",
+        "operationId": "createDiaryEntry",
+        "description": "Creates a new diary entry for the authenticated user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "description",
+                  "emotions"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "A wonderful day"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "I had a great walk in the park, enjoyed the sunshine, and felt really happy and relaxed."
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-09-19T20:45:31.607Z"
+                  },
+                  "emotions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "6895bd86a5c677999ed2ae27"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created an entry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully created an Entry!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/diaryEntry"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
+    "/api/diaries/{entryId}": {
+      "patch": {
+        "tags": [
+          "Diaries"
+        ],
+        "summary": "Update a diary entry",
+        "operationId": "updateDiaryEntry",
+        "description": "Updates specific fields of an existing diary entry for the authenticated user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "entryId",
+            "required": true,
+            "description": "The ID of the diary entry to update.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "example": "68cd0eb8dad8594a727eecbf"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "minProperties": 1,
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "Updated title"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Updated description"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Accepts YYYY-MM-DD, DD.MM.YYYY or DD-MM-YYYY.",
+                    "example": "2025-09-19"
+                  },
+                  "emotions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[0-9a-fA-F]{24}$"
+                    },
+                    "example": [
+                      "6895bd86a5c677999ed2ae27"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully patched diary entry!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully patched diary entry!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/diaryEntry"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "422": {
+            "$ref": "#/components/responses/422"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Diaries"
+        ],
+        "summary": "Delete a diary entry",
+        "operationId": "deleteDiaryEntry",
+        "description": "Deletes a specific diary entry for the authenticated user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "entryId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "68ce8209f05846159122e8c"
+            },
+            "description": "The ID of the diary entry to delete"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Diary entry successfully deleted (no content returned)"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          }
+        }
+      }
+    },
+    "/api/diaries/emotions": {
+      "get": {
+        "tags": [
+          "Diaries"
+        ],
+        "summary": "Get all emotions",
+        "operationId": "getEmotions",
+        "description": "Returns a list of all available emotions.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched emotions!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "message",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Successfully fetched emotions!"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/emotions"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -153,6 +1336,16 @@
             "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,72}$",
             "example": "P@ssw0rd1"
           },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "boy",
+              "girl",
+              "null"
+            ],
+            "example": "null",
+            "default": "null"
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time",
@@ -164,9 +1357,263 @@
             "readOnly": true
           }
         }
+      },
+      "babyState": {
+        "type": "object",
+        "properties": {
+          "week": {
+            "type": "integer",
+            "example": 5
+          },
+          "analogy": {
+            "type": "string",
+            "example": "Авокадо"
+          },
+          "size": {
+            "type": "number",
+            "example": 12
+          },
+          "weight": {
+            "type": "number",
+            "example": 45
+          },
+          "activity": {
+            "type": "string",
+            "example": "Мязи обличчя вже працюють"
+          },
+          "development": {
+            "type": "string",
+            "example": "На цьому тижні кісткова система малюка продовжує активно розвиватися"
+          },
+          "fact": {
+            "type": "string",
+            "example": "Серце вашого малюка зараз перекачує близько 25 літрів крові на добу"
+          },
+          "image": {
+            "type": "string",
+            "format": "url",
+            "example": "https://ftp.goit.study/img/lehlehka/6895ce04a5c677999ed2af34.webp"
+          },
+          "momDailyTips": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Не забувайте про зволоження шкіри живота та стегон",
+              "Влаштуйте собі день релаксу"
+            ]
+          }
+        }
+      },
+      "task": {
+        "type": "object",
+        "description": "Task entity",
+        "additionalProperties": false,
+        "required": [
+          "_id",
+          "title",
+          "date",
+          "userId",
+          "completed",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Mongo ObjectId",
+            "example": "60c72b2f9b1d9c001f5c8a2b"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160,
+            "example": "Buy groceries"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-09-18T00:00:00.000Z"
+          },
+          "userId": {
+            "type": "string",
+            "description": "The user ID of the task owner.",
+            "pattern": "^[0-9a-fA-F]{24}$",
+            "example": "68b328246e5a138b8b59c8ca"
+          },
+          "completed": {
+            "type": "boolean",
+            "example": false
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "momState": {
+        "type": "object",
+        "properties": {
+          "week": {
+            "type": "integer",
+            "example": 14
+          },
+          "feelings": {
+            "type": "object",
+            "properties": {
+              "states": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "Закладеність носа",
+                  "Прилив сил",
+                  "Ріст живота"
+                ]
+              },
+              "sensationDescr": {
+                "type": "string",
+                "example": "Ви можете помітити, що вам стало важче дихати носом"
+              }
+            }
+          },
+          "comfortTips": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "Харчування",
+                    "Активність",
+                    "Відпочинок та комфорт"
+                  ],
+                  "example": "Харчування"
+                },
+                "tip": {
+                  "type": "string",
+                  "example": "Додайте до раціону продукти, багаті на Омега-3"
+                }
+              }
+            }
+          }
+        }
+      },
+      "diaryEntry": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "68cd0eb8dad8594a727eecb"
+          },
+          "title": {
+            "type": "string",
+            "example": "A wonderful day"
+          },
+          "description": {
+            "type": "string",
+            "example": "I had a great walk in the park, enjoyed the sunshine, and felt really happy and relaxed."
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-09-19T20:45:31.607Z"
+          },
+          "userId": {
+            "type": "string",
+            "example": "68caf43ae72474007ccba4c4"
+          },
+          "emotions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string",
+                  "example": "6895bd86a5c677999ed2ae27"
+                },
+                "title": {
+                  "type": "string",
+                  "example": "Joy"
+                }
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-09-19T20:45:31.615Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-09-19T20:45:31.615Z"
+          }
+        }
+      },
+      "emotions": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "6895bd86a5c677999ed2ae14"
+          },
+          "title": {
+            "type": "string",
+            "example": "Joi"
+          }
+        },
+        "required": [
+          "_id",
+          "title"
+        ]
       }
     },
     "responses": {
+      "400": {
+        "description": "Bad Request error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "message",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 400
+                },
+                "message": {
+                  "type": "string",
+                  "example": "BadRequest"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "message"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid request payload"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "401": {
         "description": "Unauthorized error",
         "content": {
@@ -204,6 +1651,43 @@
           }
         }
       },
+      "404": {
+        "description": "Not found error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "message",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 404
+                },
+                "message": {
+                  "type": "string",
+                  "example": "NotFoundError"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "message"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "409": {
         "description": "Conflict error",
         "content": {
@@ -233,6 +1717,43 @@
                     "message": {
                       "type": "string",
                       "example": "Conflict"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "422": {
+        "description": "Validation error (Unprocessable Entity)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "message",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 422
+                },
+                "message": {
+                  "type": "string",
+                  "example": "ValidationError"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "message"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Validation failed"
                     }
                   }
                 }

@@ -8,10 +8,11 @@ import tasksRouter from './tasks.js';
 const router = Router();
 
 router.use(authRouter);
+router.use(weeksRouter);
 router.use(usersRouter);
 router.use(tasksRouter);
 router.use(diariesRouter);
-router.use(weeksRouter);
+
 
 
 export default router;

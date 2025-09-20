@@ -1,0 +1,33 @@
+tags:
+  - Tasks
+summary: Create a new task
+operationId: createTask
+description: Creates a new task for the authenticated user.
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - title
+          - date
+        properties:
+          title:
+            type: string
+            example: Buy groceries
+          date:
+            type: string
+            format: date
+            example: '2025-09-18'
+responses:
+  '201':
+    description: Task created successfully
+    content:
+      application/json:
+        schema:
+          $ref: '../../../components/schemas/task.yaml'
+  '401':
+    $ref: '../../../components/responses/401.yaml'
