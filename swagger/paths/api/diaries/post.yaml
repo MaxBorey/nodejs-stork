@@ -1,51 +1,68 @@
-tags:
-  - Diaries
+tags: [Diaries]
 summary: Create a new diary entry
 operationId: createDiaryEntry
-description: Creates a new diary entry for the authenticated user.
+description: Creates a new diary entry for the authenticated user. Only title and description are required; emotions are optional.
 security:
   - bearerAuth: []
+
 requestBody:
   required: true
   content:
     application/json:
       schema:
         type: object
-        required:
-          - title
-          - description
-          - emotions
+        additionalProperties: false
+        required: [title, description]
         properties:
           title:
             type: string
-            example: A wonderful day
+            minLength: 1
+            maxLength: 160
+            example: 'A wonderful day'
           description:
             type: string
-            example: I had a great walk in the park, enjoyed the sunshine, and felt really happy and relaxed.
-          date:
-            type: string
-            format: date-time
-            example: 2025-09-19T20:45:31.607Z
+            minLength: 1
+            example: 'I had a great walk in the park, enjoyed the sunshine...'
           emotions:
             type: array
+            description: Optional list of emotion IDs. Can be omitted or empty.
             items:
               type: string
-              example: 6895bd86a5c677999ed2ae27
+              pattern: '^[0-9a-fA-F]{24}$'
+            minItems: 0
+      examples:
+        minimal:
+          summary: Only title & description
+          value:
+            title: 'Test'
+            description: 'Test'
+        withEmotions:
+          summary: With optional emotions
+          value:
+            title: 'Grateful morning'
+            description: 'Felt calm and thankful.'
+            emotions: ['6895bd86a5c677999ed2ae27', '6895bd86a5c677999ed2af11']
+
 responses:
   '201':
-    description: Successfully created an entry
+    description: Successfully created a diary entry!
     content:
       application/json:
         schema:
           type: object
+          required: [status, message, data]
           properties:
             status:
               type: integer
               example: 201
             message:
               type: string
-              example: Successfully created an Entry!
+              example: Successfully created a diary entry!
             data:
               $ref: ../../../components/schemas/diaryEntry.yaml
+  '400':
+    $ref: ../../../components/responses/400.yaml
   '401':
     $ref: ../../../components/responses/401.yaml
+  '422':
+    $ref: ../../../components/responses/422.yaml
