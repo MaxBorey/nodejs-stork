@@ -43,9 +43,10 @@ Node.js, Express, MongoDB/Mongoose, JWT, Google OAuth, Cloudinary, Swagger UI.
 #API_SECRET=
 
 4. **Run**
-   
+   ```bash
    npm run dev   # development mode
     # or
+   ```bash
    npm start     # production start
 
 5. **Scripts**
