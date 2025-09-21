@@ -12,7 +12,7 @@ tags:
   - name: Auth
     description: Auth operations.
 servers:
-  # - url: http://localhost:3000
+  - url: http://localhost:3000
   - url: https://nodejs-stork.onrender.com
 paths:
   /api/auth/register:
