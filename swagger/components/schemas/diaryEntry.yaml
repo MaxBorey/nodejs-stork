@@ -1,8 +1,19 @@
 type: object
+description: Diary entry entity
+additionalProperties: false
+required:
+  - _id
+  - title
+  - description
+  - date
+  - userId
+  - createdAt
+  - updatedAt
 properties:
   _id:
     type: string
-    example: '68cd0eb8dad8594a727eecb'
+    pattern: '^[0-9a-fA-F]{24}$'
+    example: '68cd0eb8dad8594a727eecbf'
   title:
     type: string
     example: 'A wonderful day'
@@ -15,18 +26,25 @@ properties:
     example: '2025-09-19T20:45:31.607Z'
   userId:
     type: string
+    pattern: '^[0-9a-fA-F]{24}$'
     example: '68caf43ae72474007ccba4c4'
   emotions:
     type: array
+    description: Optional populated emotions; omitted or empty if none.
     items:
       type: object
+      additionalProperties: false
+      required: [_id, title]
       properties:
         _id:
           type: string
+          pattern: '^[0-9a-fA-F]{24}$'
           example: '6895bd86a5c677999ed2ae27'
         title:
           type: string
           example: 'Joy'
+    minItems: 0
+    default: []
   createdAt:
     type: string
     format: date-time
