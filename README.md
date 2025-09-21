@@ -42,15 +42,20 @@ Node.js, Express, MongoDB/Mongoose, JWT, Google OAuth, Cloudinary, Swagger UI.
 #API_KEY=
 #API_SECRET=
 
-4. **Run**
-   # development mode
+3. **Run**
+    # development mode
    ```bash
    npm run dev
 # or
    # production start   
    ```bash
    npm start
-#
 
+4. **API docs**
+---
+Local: http://localhost:3000/api-docs
 
+Prod: https://nodejs-stork.onrender.com/api-docs
 
+In Swagger UI, use the Server dropdown to pick prod or local.
+  
