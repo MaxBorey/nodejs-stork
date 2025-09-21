@@ -45,7 +45,7 @@ paths:
 
   /api/tasks/{taskId}/completed:
     patch:
-      $ref: ../swagger/paths/api/tasks/{taskId}/complited/patch.yaml
+      $ref: ../swagger/paths/api/tasks/{taskId}/completed/patch.yaml
 
   /api/weeks/info:
     get:
