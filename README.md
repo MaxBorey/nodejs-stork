@@ -51,8 +51,10 @@ Node.js, Express, MongoDB/Mongoose, JWT, Google OAuth, Cloudinary, Swagger UI.
    ```bash
    npm start
 
+<!-- break -->
+
 4. **API docs**
----
+
 Local: http://localhost:3000/api-docs
 
 Prod: https://nodejs-stork.onrender.com/api-docs
