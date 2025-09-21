@@ -49,12 +49,8 @@ Node.js, Express, MongoDB/Mongoose, JWT, Google OAuth, Cloudinary, Swagger UI.
 # or
    # production start   
    ```bash
-   npm start     
+   npm start
+#
 
-5. **Scripts**
 
-#lint/lint:fix — лапки навколо глоби працюють і в Windows, і в *nix.
-#docs:lint — перевіряє OpenAPI.
-#docs:bundle — збирає все в docs/swagger.json (зручно віддавати статично або годувати Swagger UI).
-#docs:preview — локальний прев’ю в браузері.
-#build — просто викликає бандл доки (можеш додати інші кроки за потреби).
+
