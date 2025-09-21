@@ -1061,7 +1061,7 @@
         ],
         "summary": "Update a diary entry",
         "operationId": "updateDiaryEntry",
-        "description": "Updates specific fields of an existing diary entry for the authenticated user.",
+        "description": "Updates specific fields of an existing diary entry for the authenticated user. Response returns emotions populated with {_id, title}.",
         "security": [
           {
             "bearerAuth": []
@@ -1091,27 +1091,50 @@
                 "properties": {
                   "title": {
                     "type": "string",
-                    "example": "Updated title"
+                    "example": "Новий заголовок"
                   },
                   "description": {
                     "type": "string",
-                    "example": "Updated description"
-                  },
-                  "date": {
-                    "type": "string",
-                    "format": "date",
-                    "description": "Accepts YYYY-MM-DD, DD.MM.YYYY or DD-MM-YYYY.",
-                    "example": "2025-09-19"
+                    "example": "Оновлений текст запису"
                   },
                   "emotions": {
                     "type": "array",
+                    "description": "Full replacement of emotions for the entry.\nAlways send the entire current selection:\n- array of emotion IDs when some emotions are selected;\n- an empty array `[]` when none are selected.\nPartial add/remove is not supported — the list is overwritten.\n",
                     "items": {
                       "type": "string",
                       "pattern": "^[0-9a-fA-F]{24}$"
                     },
-                    "example": [
-                      "6895bd86a5c677999ed2ae27"
+                    "minItems": 0
+                  }
+                }
+              },
+              "examples": {
+                "updateTitleOnly": {
+                  "summary": "Update only title",
+                  "value": {
+                    "title": "Попити"
+                  }
+                },
+                "updateTitleAndDescription": {
+                  "summary": "Update title and description",
+                  "value": {
+                    "title": "Ранок",
+                    "description": "Спокійний настрій, легка прогулянка."
+                  }
+                },
+                "withEmotions": {
+                  "summary": "Overwrite emotions with current selection",
+                  "value": {
+                    "emotions": [
+                      "6895bd86a5c677999ed2ae20",
+                      "6895bd86a5c677999ed2ae25"
                     ]
+                  }
+                },
+                "withoutEmotions": {
+                  "summary": "No emotions selected (send empty array)",
+                  "value": {
+                    "emotions": []
                   }
                 }
               }
