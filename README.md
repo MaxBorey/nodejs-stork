@@ -11,7 +11,7 @@
 REST API for a pregnancy app: week tracking, diary, tasks, emotions. Supports authentication, avatar uploads, and convenient API documentation.
 
 ## Features
-- **Auth:** JWT + Google OAuth (signin/signup, protected routes)
+- **Auth:** JWT (signin/signup, protected routes)
 - **Users:** profile, partial updates (JSON or `multipart/form-data` with avatar)
 - **Weeks:** public/private week info
 - **Diaries:** CRUD for diary entries + emotions linking
@@ -22,7 +22,7 @@ REST API for a pregnancy app: week tracking, diary, tasks, emotions. Supports au
 - **Code quality:** ESLint, Prettier
 
 ## Tech stack
-Node.js, Express, MongoDB/Mongoose, JWT, Google OAuth, Cloudinary, Swagger UI.
+Node.js, Express, MongoDB/Mongoose, JWT, Cloudinary, Swagger UI.
 
 ## Getting started
 
