@@ -1,7 +1,7 @@
 tags: [Diaries]
 summary: Update a diary entry
 operationId: updateDiaryEntry
-description: Updates specific fields of an existing diary entry for the authenticated user.
+description: Updates specific fields of an existing diary entry for the authenticated user. Response returns emotions populated with {_id, title}.
 security:
   - bearerAuth: []
 
@@ -12,8 +12,8 @@ parameters:
     description: The ID of the diary entry to update.
     schema:
       type: string
-      pattern: '^[0-9a-fA-F]{24}$' # ← валідний ObjectId
-      example: 68cd0eb8dad8594a727eecbf # ← 24 символи
+      pattern: '^[0-9a-fA-F]{24}$'
+      example: 68cd0eb8dad8594a727eecbf
 
 requestBody:
   required: true
@@ -22,26 +22,46 @@ requestBody:
       schema:
         type: object
         additionalProperties: false
-        minProperties: 1 # ← достатньо одного поля
+        minProperties: 1
         properties:
           title:
             type: string
-            example: Updated title
+            example: 'Новий заголовок'
           description:
             type: string
-            example: Updated description
-          date:
-            type: string
-            format: date
-            description: Accepts YYYY-MM-DD, DD.MM.YYYY or DD-MM-YYYY.
-            example: '2025-09-19'
+            example: 'Оновлений текст запису'
           emotions:
             type: array
+            description: |
+              Full replacement of emotions for the entry.
+              Always send the entire current selection:
+              - array of emotion IDs when some emotions are selected;
+              - an empty array `[]` when none are selected.
+              Partial add/remove is not supported — the list is overwritten.
             items:
               type: string
               pattern: '^[0-9a-fA-F]{24}$'
-            example:
-              - 6895bd86a5c677999ed2ae27
+            minItems: 0
+      examples:
+        updateTitleOnly:
+          summary: Update only title
+          value:
+            title: 'Попити'
+        updateTitleAndDescription:
+          summary: Update title and description
+          value:
+            title: 'Ранок'
+            description: 'Спокійний настрій, легка прогулянка.'
+        withEmotions:
+          summary: Overwrite emotions with current selection
+          value:
+            emotions:
+              - '6895bd86a5c677999ed2ae20'
+              - '6895bd86a5c677999ed2ae25'
+        withoutEmotions:
+          summary: No emotions selected (send empty array)
+          value:
+            emotions: []
 
 responses:
   '200':
@@ -61,7 +81,7 @@ responses:
             data:
               $ref: ../../../../components/schemas/diaryEntry.yaml
   '400':
-    $ref: ../../../../components/responses/400.yaml # invalid id / bad body
+    $ref: ../../../../components/responses/400.yaml
   '401':
     $ref: ../../../../components/responses/401.yaml
   '404':
