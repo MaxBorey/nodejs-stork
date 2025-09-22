@@ -15,7 +15,7 @@ export const updateUsersMeController = async (req, res, next) => {
     photoUrl = await saveFileToCloudinary(photo);
   }
 
-  const user = await updateUsersMe(req.params.userId, {
+  const user = await updateUsersMe(req.user.id, {
     ...req.body,
     photoURL: photoUrl,
   });
@@ -30,5 +30,3 @@ export const updateUsersMeController = async (req, res, next) => {
     data: user,
   });
 };
-
-export const updateAvatarUsersMeController = async (req, res, next) => {};

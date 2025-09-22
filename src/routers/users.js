@@ -6,7 +6,6 @@ import {
 } from '../controllers/users.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { updateUsersMeSchema } from '../validation/users.js';
-import { isValidId } from '../middlewares/isValidId.js';
 import { upload } from '../middlewares/multer.js';
 
 const usersRouter = Router();
@@ -15,9 +14,8 @@ usersRouter.use(authenticate);
 usersRouter.get('/users/me', getUsersMeController);
 
 usersRouter.patch(
-  '/users/me/:userId',
+  '/users/me',
   upload.single('photoURL'),
-  isValidId,
   validateBody(updateUsersMeSchema),
   updateUsersMeController,
 );

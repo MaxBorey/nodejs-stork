@@ -4,9 +4,9 @@ import { normalizeDateOrThrow } from '../../utils/normalizeDate.js';
 const userSchema = new Schema(
   {
     name: {
-        type: String,
-        required: true,
-        trim: true
+      type: String,
+      required: true,
+      trim: true,
     },
     email: {
       type: String,
@@ -14,29 +14,32 @@ const userSchema = new Schema(
       unique: true,
       lowercase: true,
       trim: true,
-      match: [/^\S+@\S+\.\S+$/, 'Email is invalid']
+      match: [/^\S+@\S+\.\S+$/, 'Email is invalid'],
     },
     gender: {
       type: String,
       enum: ['boy', 'girl', 'null'],
-      default: 'null'
+      default: 'null',
     },
     dueDate: {
       type: Date,
-    set: (v) => (v === null || v === '' || v === undefined ? v : normalizeDateOrThrow(v)),
+      set: (v) =>
+        v === null || v === '' || v === undefined ? v : normalizeDateOrThrow(v),
     },
     password: {
       type: String,
-      required: true
-        },
+      required: true,
+    },
     photoURL: {
-      type: String
+      type: String,
+      default:
+        'https://res.cloudinary.com/dmzxlx1if/image/upload/v1758557714/avatar-image_mccj83.png',
     },
   },
-    {
-      timestamps: true,
-      versionKey: false
-    }
+  {
+    timestamps: true,
+    versionKey: false,
+  },
 );
 
 userSchema.methods.toJSON = function () {
