@@ -1,11 +1,11 @@
-tags: [Diaries]
-summary: Update a diary entry
+tags:
+  - Diaries
+summary: Update a diary entry (partial)
 operationId: updateDiaryEntry
 description: >
   Partially updates an existing diary entry. Send only the fields you want to change.
-  Omitted fields remain unchanged. If you send `emotions`, it must be the full
-  current selection (1–12 unique emotion IDs); if you omit `emotions`, it is not changed.
-  Response returns emotions populated with {_id, title}.
+  Omitted fields remain unchanged. The `date` is not editable.
+  If `emotions` is sent, it must be the full current selection (1-12 unique IDs).
 security:
   - bearerAuth: []
 
@@ -13,11 +13,11 @@ parameters:
   - in: path
     name: entryId
     required: true
-    description: The ID of the diary entry to update.
+    description: 'The ID of the diary entry to update.'
     schema:
       type: string
       pattern: '^[0-9a-fA-F]{24}$'
-      example: 68cd0eb8dad8594a727eecbf
+      example: '68cd0eb8dad8594a727eecbf'
 
 requestBody:
   required: true
@@ -26,7 +26,7 @@ requestBody:
       schema:
         type: object
         additionalProperties: false
-        minProperties: 1 # ← достатньо одного поля для PATCH
+        minProperties: 1
         properties:
           title:
             type: string
@@ -38,17 +38,9 @@ requestBody:
             minLength: 1
             maxLength: 1000
             example: 'Оновлений текст запису'
-          date:
-            type: string
-            format: date # YYYY-MM-DD
-            description: Date in YYYY-MM-DD format.
-            example: '2025-09-19'
           emotions:
             type: array
-            description: >
-              Full replacement of emotions if present (send the entire selection).
-              Must contain 1–12 unique ObjectId strings. Omit this field to keep
-              emotions unchanged.
+            description: 'Full replacement if provided (1-12 unique ObjectId strings).'
             items:
               type: string
               pattern: '^[0-9a-fA-F]{24}$'
@@ -57,7 +49,6 @@ requestBody:
             uniqueItems: true
       example:
         description: 'Трошки підправив нотатку'
-        # emotions не відправляємо → лишаються без змін
 
 responses:
   '200':
@@ -66,7 +57,10 @@ responses:
       application/json:
         schema:
           type: object
-          required: [status, message, data]
+          required:
+            - status
+            - message
+            - data
           properties:
             status:
               type: integer
