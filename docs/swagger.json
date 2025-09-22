@@ -1074,8 +1074,7 @@
             "description": "The ID of the diary entry to update.",
             "schema": {
               "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$",
-              "example": "68cd0eb8dad8594a727eecbf"
+              "pattern": "^[0-9a-fA-F]{24}$"
             }
           }
         ],
@@ -1186,8 +1185,7 @@
             "name": "entryId",
             "required": true,
             "schema": {
-              "type": "string",
-              "example": "68ce8209f05846159122e8c"
+              "type": "string"
             },
             "description": "The ID of the diary entry to delete"
           }
