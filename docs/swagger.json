@@ -229,7 +229,7 @@
         ],
         "summary": "Get current user profile",
         "operationId": "getUsersMe",
-        "description": "Returns the currently authenticated user's profile.",
+        "description": "Returns the currently authenticated user's profile. The user ID is derived from the authentication token/cookie.",
         "security": [
           {
             "bearerAuth": []
@@ -255,6 +255,8 @@
                     "_id": {
                       "type": "string",
                       "description": "Mongo ObjectId",
+                      "pattern": "^[0-9a-fA-F]{24}$",
+                      "readOnly": true,
                       "example": "60c72b2f9b1d9c001f5c8a2b"
                     },
                     "name": {
@@ -276,27 +278,41 @@
                       "example": "null"
                     },
                     "dueDate": {
-                      "type": [
-                        "string",
-                        "null"
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "format": "date"
+                        },
+                        {
+                          "type": "null"
+                        }
                       ],
-                      "format": "date",
+                      "description": "May be null. When provided, format is YYYY-MM-DD.",
                       "example": "2025-12-31"
                     },
                     "photoURL": {
-                      "type": [
-                        "string",
-                        "null"
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
                       ],
-                      "example": "https://res.cloudinary.com/demo/image/upload/v12345/photo.jpg"
+                      "description": "Avatar URL. A default is applied by the server if none was uploaded.",
+                      "example": "https://res.cloudinary.com/dmzxlx1if/image/upload/v1758557714/avatar-image_mccj83.png"
                     },
                     "createdAt": {
                       "type": "string",
-                      "format": "date-time"
+                      "format": "date-time",
+                      "readOnly": true,
+                      "example": "2025-09-01T10:15:00.000Z"
                     },
                     "updatedAt": {
                       "type": "string",
-                      "format": "date-time"
+                      "format": "date-time",
+                      "readOnly": true,
+                      "example": "2025-09-10T12:30:00.000Z"
                     }
                   }
                 },
@@ -308,7 +324,7 @@
                       "email": "jane@example.com",
                       "gender": "boy",
                       "dueDate": "2025-12-31",
-                      "photoURL": "string",
+                      "photoURL": "https://res.cloudinary.com/dmzxlx1if/image/upload/v1758557714/avatar-image_mccj83.png",
                       "createdAt": "2025-09-01T10:15:00.000Z",
                       "updatedAt": "2025-09-10T12:30:00.000Z"
                     }
@@ -321,31 +337,17 @@
             "$ref": "#/components/responses/401"
           }
         }
-      }
-    },
-    "/api/users/me/{userId}": {
+      },
       "patch": {
         "tags": [
           "Users"
         ],
         "summary": "Update current user profile",
         "operationId": "updateUsersMe",
-        "description": "Updates the authenticated user's profile. Use `multipart/form-data` when uploading an avatar in field `photoURL`.\n",
+        "description": "Updates the authenticated user's profile. The user ID is taken from the authentication token/cookie; do not send it in the URL. Required field: dueDate. Optional fields: gender and photoURL (avatar upload). If optional fields are omitted, existing values remain unchanged; a default avatar URL may be applied by the server if none exists. Do not send an empty value; if you don't upload\n  a file, leave this field untouched.\n",
         "security": [
           {
             "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "description": "The ID of the user to update.",
-            "schema": {
-              "type": "string",
-              "pattern": "^[0-9a-fA-F]{24}$"
-            }
           }
         ],
         "requestBody": {
@@ -355,16 +357,15 @@
               "schema": {
                 "type": "object",
                 "additionalProperties": false,
-                "minProperties": 1,
+                "required": [
+                  "dueDate"
+                ],
                 "properties": {
-                  "name": {
+                  "dueDate": {
                     "type": "string",
-                    "example": "Jane Doe"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "example": "jane@example.com"
+                    "format": "date",
+                    "description": "Accepts YYYY-MM-DD, DD.MM.YYYY or DD-MM-YYYY.",
+                    "example": "2025-12-31"
                   },
                   "gender": {
                     "type": "string",
@@ -374,12 +375,6 @@
                       "null"
                     ],
                     "example": "null"
-                  },
-                  "dueDate": {
-                    "type": "string",
-                    "format": "date",
-                    "description": "Accepts YYYY-MM-DD, DD.MM.YYYY or DD-MM-YYYY.",
-                    "example": "2025-12-31"
                   },
                   "photoURL": {
                     "type": "string",
@@ -397,14 +392,15 @@
               "schema": {
                 "type": "object",
                 "additionalProperties": false,
-                "minProperties": 1,
+                "required": [
+                  "dueDate"
+                ],
                 "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "email": {
+                  "dueDate": {
                     "type": "string",
-                    "format": "email"
+                    "format": "date",
+                    "description": "Accepts YYYY-MM-DD, DD.MM.YYYY or DD-MM-YYYY.",
+                    "example": "2025-12-31"
                   },
                   "gender": {
                     "type": "string",
@@ -412,14 +408,14 @@
                       "boy",
                       "girl",
                       "null"
-                    ]
-                  },
-                  "dueDate": {
-                    "type": "string",
-                    "format": "date",
-                    "description": "Accepts YYYY-MM-DD, DD.MM.YYYY or DD-MM-YYYY."
+                    ],
+                    "example": "null"
                   }
                 }
+              },
+              "example": {
+                "dueDate": "2025-12-31",
+                "gender": "girl"
               }
             }
           }
@@ -431,6 +427,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
+                  "additionalProperties": false,
                   "required": [
                     "status",
                     "message",
@@ -459,6 +456,7 @@
                       "properties": {
                         "_id": {
                           "type": "string",
+                          "description": "Mongo ObjectId",
                           "example": "60c72b2f9b1d9c001f5c8a2b"
                         },
                         "name": {
@@ -480,19 +478,27 @@
                           "example": "null"
                         },
                         "dueDate": {
-                          "type": [
-                            "string",
-                            "null"
+                          "oneOf": [
+                            {
+                              "type": "string",
+                              "format": "date"
+                            },
+                            {
+                              "type": "null"
+                            }
                           ],
-                          "format": "date",
                           "example": "2025-12-31"
                         },
                         "photoURL": {
-                          "type": [
-                            "string",
-                            "null"
+                          "oneOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
                           ],
-                          "example": "https://res.cloudinary.com/demo/image/upload/v12345/photo.jpg"
+                          "example": "https://res.cloudinary.com/dmzxlx1if/image/upload/v1758557714/avatar-image_mccj83.png"
                         },
                         "createdAt": {
                           "type": "string",
@@ -1253,10 +1259,19 @@
         "type": "object",
         "description": "User entity",
         "additionalProperties": false,
+        "required": [
+          "_id",
+          "name",
+          "email",
+          "gender",
+          "createdAt",
+          "updatedAt"
+        ],
         "properties": {
-          "userId": {
-            "description": "User's id",
+          "_id": {
+            "description": "Mongo ObjectId",
             "type": "string",
+            "pattern": "^[0-9a-fA-F]{24}$",
             "readOnly": true,
             "example": "68b328246e5a138b8b59c8ca"
           },
@@ -1275,7 +1290,7 @@
             "example": "user@example.com"
           },
           "password": {
-            "description": "User's password",
+            "description": "User's password (write-only; never returned in responses)",
             "type": "string",
             "minLength": 8,
             "maxLength": 128,
@@ -1284,24 +1299,45 @@
             "example": "P@ssw0rd1"
           },
           "gender": {
+            "description": "User's selected baby gender or 'null' if unknown",
             "type": "string",
             "enum": [
               "boy",
               "girl",
               "null"
             ],
-            "example": "null",
-            "default": "null"
+            "default": "null",
+            "example": "null"
+          },
+          "dueDate": {
+            "description": "Estimated due date; can be null. Accepted formats on input: YYYY-MM-DD, DD.MM.YYYY, or DD-MM-YYYY",
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "example": "2025-12-31"
+          },
+          "photoURL": {
+            "description": "Avatar URL. Server sets a default if none was uploaded.",
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": "https://res.cloudinary.com/dmzxlx1if/image/upload/v1758557714/avatar-image_mccj83.png",
+            "example": "https://res.cloudinary.com/dmzxlx1if/image/upload/v1758557714/avatar-image_mccj83.png"
           },
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true
+            "readOnly": true,
+            "example": "2025-09-01T10:15:00.000Z"
           },
           "updatedAt": {
             "type": "string",
             "format": "date-time",
-            "readOnly": true
+            "readOnly": true,
+            "example": "2025-09-10T12:30:00.000Z"
           }
         }
       },

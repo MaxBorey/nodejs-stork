@@ -29,9 +29,8 @@ paths:
     get:
       $ref: ../swagger/paths/api/users/me/get.yaml
 
-  /api/users/me/{userId}:
     patch:
-      $ref: ../swagger/paths/api/users/me/{userId}/patch.yaml
+      $ref: ../swagger/paths/api/users/me/patch.yaml
 
   /api/weeks/public:
     get:

@@ -1,0 +1,141 @@
+tags:
+  - Users
+summary: Update current user profile
+operationId: updateUsersMe
+description: >
+  Updates the authenticated user's profile. The user ID is taken from the
+  authentication token/cookie; do not send it in the URL.
+  Required field: dueDate. Optional fields: gender and photoURL (avatar upload).
+  If optional fields are omitted, existing values remain unchanged; a default
+  avatar URL may be applied by the server if none exists.
+  Do not send an empty value; if you don't upload
+    a file, leave this field untouched.
+security:
+  - bearerAuth: []
+
+requestBody:
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        additionalProperties: false
+        required:
+          - dueDate
+        properties:
+          dueDate:
+            type: string
+            format: date
+            description: Accepts YYYY-MM-DD, DD.MM.YYYY or DD-MM-YYYY.
+            example: '2025-12-31'
+          gender:
+            type: string
+            enum:
+              - boy
+              - girl
+              - 'null'
+            example: 'null'
+          photoURL:
+            type: string
+            format: binary
+      encoding:
+        photoURL:
+          contentType: image/jpeg, image/png
+
+    application/json:
+      schema:
+        type: object
+        additionalProperties: false
+        required:
+          - dueDate
+        properties:
+          dueDate:
+            type: string
+            format: date
+            description: Accepts YYYY-MM-DD, DD.MM.YYYY or DD-MM-YYYY.
+            example: '2025-12-31'
+          gender:
+            type: string
+            enum:
+              - boy
+              - girl
+              - 'null'
+            example: 'null'
+      example:
+        dueDate: '2025-12-31'
+        gender: 'girl'
+
+responses:
+  '200':
+    description: User profile updated successfully
+    content:
+      application/json:
+        schema:
+          type: object
+          additionalProperties: false
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: User profile updated successfully!
+            data:
+              type: object
+              additionalProperties: false
+              required:
+                - _id
+                - name
+                - email
+                - gender
+                - createdAt
+                - updatedAt
+              properties:
+                _id:
+                  type: string
+                  description: Mongo ObjectId
+                  example: '60c72b2f9b1d9c001f5c8a2b'
+                name:
+                  type: string
+                  example: 'Jane Doe'
+                email:
+                  type: string
+                  format: email
+                  example: 'jane@example.com'
+                gender:
+                  type: string
+                  enum:
+                    - boy
+                    - girl
+                    - 'null'
+                  example: 'null'
+                dueDate:
+                  oneOf:
+                    - type: string
+                      format: date
+                    - type: 'null'
+                  example: '2025-12-31'
+                photoURL:
+                  oneOf:
+                    - type: string
+                    - type: 'null'
+                  example: 'https://res.cloudinary.com/dmzxlx1if/image/upload/v1758557714/avatar-image_mccj83.png'
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+
+  '401':
+    $ref: ../../../../components/responses/401.yaml
+  '404':
+    $ref: ../../../../components/responses/404.yaml
+  '400':
+    $ref: ../../../../components/responses/400.yaml
+  '422':
+    $ref: ../../../../components/responses/422.yaml

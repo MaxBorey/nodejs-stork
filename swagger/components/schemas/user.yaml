@@ -1,42 +1,78 @@
 type: object
 description: User entity
 additionalProperties: false
+required:
+  - _id
+  - name
+  - email
+  - gender
+  - createdAt
+  - updatedAt
 properties:
-  userId:
-    description: "User's id"
+  _id:
+    description: 'Mongo ObjectId'
     type: string
+    pattern: '^[0-9a-fA-F]{24}$'
     readOnly: true
     example: '68b328246e5a138b8b59c8ca'
+
   name:
     description: "User's name"
     type: string
     minLength: 3
     maxLength: 32
     example: 'John Doe'
+
   email:
     description: "User's email"
     type: string
     format: email
     maxLength: 64
     example: 'user@example.com'
+
   password:
-    description: "User's password"
+    description: "User's password (write-only; never returned in responses)"
     type: string
     minLength: 8
     maxLength: 128
     writeOnly: true
     pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,72}$'
     example: 'P@ssw0rd1'
+
   gender:
+    description: "User's selected baby gender or 'null' if unknown"
     type: string
-    enum: ['boy', 'girl', 'null']
-    example: 'null'
+    enum:
+      - boy
+      - girl
+      - 'null'
     default: 'null'
+    example: 'null'
+
+  dueDate:
+    description: 'Estimated due date; can be null. Accepted formats on input: YYYY-MM-DD, DD.MM.YYYY, or DD-MM-YYYY'
+    type:
+      - string
+      - 'null'
+    format: date
+    example: '2025-12-31'
+
+  photoURL:
+    description: 'Avatar URL. Server sets a default if none was uploaded.'
+    type:
+      - string
+      - 'null'
+    default: 'https://res.cloudinary.com/dmzxlx1if/image/upload/v1758557714/avatar-image_mccj83.png'
+    example: 'https://res.cloudinary.com/dmzxlx1if/image/upload/v1758557714/avatar-image_mccj83.png'
+
   createdAt:
     type: string
     format: date-time
     readOnly: true
+    example: '2025-09-01T10:15:00.000Z'
+
   updatedAt:
     type: string
     format: date-time
     readOnly: true
+    example: '2025-09-10T12:30:00.000Z'
