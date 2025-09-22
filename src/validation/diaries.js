@@ -31,7 +31,6 @@ export const createDiaryEntrySchema = Joi.object({
   // Обовʼязково, формат лише YYYY-MM-DD
   date: Joi.string()
     .pattern(/^\d{4}-\d{2}-\d{2}$/)
-    .required()
     .messages({
       'string.base': 'Поле "{#label}" повинно бути рядком',
       'string.empty': 'Поле "{#label}" не може бути порожнім',
