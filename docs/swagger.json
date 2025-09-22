@@ -950,7 +950,7 @@
         ],
         "summary": "Create a new diary entry",
         "operationId": "createDiaryEntry",
-        "description": "Creates a new diary entry for the authenticated user.\n",
+        "description": "Creates a new diary entry for the authenticated user. The `date` is set by the server automatically (today). Send only title, description, and emotions.\n",
         "security": [
           {
             "bearerAuth": []
@@ -966,7 +966,6 @@
                 "required": [
                   "title",
                   "description",
-                  "date",
                   "emotions"
                 ],
                 "properties": {
@@ -982,15 +981,9 @@
                     "maxLength": 1000,
                     "example": "Short walk and coffee."
                   },
-                  "date": {
-                    "type": "string",
-                    "format": "date",
-                    "description": "Required. The UI is prefilled with today's date by default; the client must send this value explicitly.",
-                    "example": "2025-09-19"
-                  },
                   "emotions": {
                     "type": "array",
-                    "description": "Required. Full list of selected emotion IDs (1–12). The entry will store exactly this list.",
+                    "description": "Required. Full list of selected emotion IDs (1–12).",
                     "items": {
                       "type": "string",
                       "pattern": "^[0-9a-fA-F]{24}$"
@@ -1004,7 +997,6 @@
               "example": {
                 "title": "Morning",
                 "description": "Short walk and coffee.",
-                "date": "2025-09-19",
                 "emotions": [
                   "6895bd86a5c677999ed2ae27"
                 ]
@@ -1058,9 +1050,9 @@
         "tags": [
           "Diaries"
         ],
-        "summary": "Update a diary entry",
+        "summary": "Update a diary entry (partial)",
         "operationId": "updateDiaryEntry",
-        "description": "Partially updates an existing diary entry. Send only the fields you want to change. Omitted fields remain unchanged. If you send `emotions`, it must be the full current selection (1–12 unique emotion IDs); if you omit `emotions`, it is not changed. Response returns emotions populated with {_id, title}.\n",
+        "description": "Partially updates an existing diary entry. Send only the fields you want to change. Omitted fields remain unchanged. The `date` is not editable. If `emotions` is sent, it must be the full current selection (1-12 unique IDs).\n",
         "security": [
           {
             "bearerAuth": []
@@ -1100,15 +1092,9 @@
                     "maxLength": 1000,
                     "example": "Оновлений текст запису"
                   },
-                  "date": {
-                    "type": "string",
-                    "format": "date",
-                    "description": "Date in YYYY-MM-DD format.",
-                    "example": "2025-09-19"
-                  },
                   "emotions": {
                     "type": "array",
-                    "description": "Full replacement of emotions if present (send the entire selection). Must contain 1–12 unique ObjectId strings. Omit this field to keep emotions unchanged.\n",
+                    "description": "Full replacement if provided (1-12 unique ObjectId strings).",
                     "items": {
                       "type": "string",
                       "pattern": "^[0-9a-fA-F]{24}$"
@@ -1504,11 +1490,14 @@
           "date": {
             "type": "string",
             "format": "date",
+            "readOnly": true,
+            "description": "Set by the server on creation; cannot be updated.",
             "example": "2025-09-19"
           },
           "userId": {
             "type": "string",
             "pattern": "^[0-9a-fA-F]{24}$",
+            "readOnly": true,
             "example": "68caf43ae72474007ccba4c4"
           },
           "emotions": {
@@ -1540,11 +1529,13 @@
           "createdAt": {
             "type": "string",
             "format": "date-time",
+            "readOnly": true,
             "example": "2025-09-19T20:45:31.615Z"
           },
           "updatedAt": {
             "type": "string",
             "format": "date-time",
+            "readOnly": true,
             "example": "2025-09-19T20:45:31.615Z"
           }
         }

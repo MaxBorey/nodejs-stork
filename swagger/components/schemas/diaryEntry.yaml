@@ -27,19 +27,24 @@ properties:
     example: 'I had a great walk in the park, enjoyed the sunshine, and felt really happy and relaxed.'
   date:
     type: string
-    format: date # ← YYYY-MM-DD
+    format: date
+    readOnly: true
+    description: 'Set by the server on creation; cannot be updated.'
     example: '2025-09-19'
   userId:
     type: string
     pattern: '^[0-9a-fA-F]{24}$'
+    readOnly: true
     example: '68caf43ae72474007ccba4c4'
   emotions:
     type: array
-    description: Populated emotions (via Mongoose populate).
+    description: 'Populated emotions (via Mongoose populate).'
     items:
       type: object
       additionalProperties: false
-      required: [_id, title]
+      required:
+        - _id
+        - title
       properties:
         _id:
           type: string
@@ -54,8 +59,10 @@ properties:
   createdAt:
     type: string
     format: date-time
+    readOnly: true
     example: '2025-09-19T20:45:31.615Z'
   updatedAt:
     type: string
     format: date-time
+    readOnly: true
     example: '2025-09-19T20:45:31.615Z'

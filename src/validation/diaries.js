@@ -29,15 +29,9 @@ export const createDiaryEntrySchema = Joi.object({
     }),
 
   // Обовʼязково, формат лише YYYY-MM-DD
-  date: Joi.string()
-    .pattern(/^\d{4}-\d{2}-\d{2}$/)
-    .required()
-    .messages({
-      'string.base': 'Поле "{#label}" повинно бути рядком',
-      'string.empty': 'Поле "{#label}" не може бути порожнім',
-      'string.pattern.base': 'Поле "{#label}" має бути у форматі YYYY-MM-DD',
-      'any.required': 'Поле "{#label}" є обовʼязковим',
-    }),
+  date: Joi.forbidden().messages({
+    'any.unknown': 'Поле "date" встановлюється автоматично та не передається',
+  }),
 
   emotions: Joi.array()
     .items(
@@ -89,12 +83,9 @@ export const updateDiaryEntrySchema = Joi.object({
     }),
 
 
-  date: Joi.string()
-    .pattern(/^\d{4}-\d{2}-\d{2}$/)
-    .messages({
-      'string.base': 'Поле "{#label}" повинно бути рядком',
-      'string.pattern.base': 'Поле "{#label}" має бути у форматі YYYY-MM-DD',
-    }),
+  date: Joi.forbidden().messages({
+    'any.unknown': 'Поле "date" не змінюється для запису щоденника',
+  }),
 
   emotions: Joi.array()
     .items(
