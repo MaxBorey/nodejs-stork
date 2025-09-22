@@ -17,7 +17,6 @@ parameters:
     schema:
       type: string
       pattern: '^[0-9a-fA-F]{24}$'
-      example: '68cd0eb8dad8594a727eecbf'
 
 requestBody:
   required: true

@@ -7,7 +7,7 @@ const emotionSchema = new mongoose.Schema({
   },
 });
 
-const diarieSchema = new mongoose.Schema(
+const diarySchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -15,6 +15,7 @@ const diarieSchema = new mongoose.Schema(
     },
     description: {
       type: String,
+      required: true,
     },
     date: {
       type: Date,
@@ -23,6 +24,7 @@ const diarieSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'users',
+      required: true,
     },
     emotions: [
       {
@@ -32,8 +34,11 @@ const diarieSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    versionKey: false
+   },
 );
 
 export const EmotionCollection = model('Emotions', emotionSchema);
-export const DiarieEntriesCollection = model('Diarie', diarieSchema);
+export const DiarieEntriesCollection = model('Diarie', diarySchema);
