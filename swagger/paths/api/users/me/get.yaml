@@ -1,7 +1,8 @@
-tags: [Users]
+tags:
+  - Users
 summary: Get current user profile
 operationId: getUsersMe
-description: Returns the currently authenticated user's profile.
+description: Returns the currently authenticated user's profile. The user ID is derived from the authentication token/cookie.
 security:
   - bearerAuth: []
 
@@ -13,46 +14,66 @@ responses:
         schema:
           type: object
           additionalProperties: false
-          required: [_id, name, email, gender, createdAt, updatedAt]
+          required:
+            - _id
+            - name
+            - email
+            - gender
+            - createdAt
+            - updatedAt
           properties:
             _id:
               type: string
               description: Mongo ObjectId
-              example: 60c72b2f9b1d9c001f5c8a2b
+              pattern: '^[0-9a-fA-F]{24}$'
+              readOnly: true
+              example: '60c72b2f9b1d9c001f5c8a2b'
             name:
               type: string
-              example: Jane Doe
+              example: 'Jane Doe'
             email:
               type: string
               format: email
-              example: jane@example.com
+              example: 'jane@example.com'
             gender:
               type: string
-              enum: [boy, girl, 'null']
+              enum:
+                - boy
+                - girl
+                - 'null'
               example: 'null'
             dueDate:
-              # OpenAPI 3.1: дозволяємо null
-              type: [string, 'null']
-              format: date
+              oneOf:
+                - type: string
+                  format: date
+                - type: 'null'
+              description: May be null. When provided, format is YYYY-MM-DD.
               example: '2025-12-31'
             photoURL:
-              type: [string, 'null']
-              example: 'https://res.cloudinary.com/demo/image/upload/v12345/photo.jpg'
+              oneOf:
+                - type: string
+                - type: 'null'
+              description: Avatar URL. A default is applied by the server if none was uploaded.
+              example: 'https://res.cloudinary.com/dmzxlx1if/image/upload/v1758557714/avatar-image_mccj83.png'
             createdAt:
               type: string
               format: date-time
+              readOnly: true
+              example: '2025-09-01T10:15:00.000Z'
             updatedAt:
               type: string
               format: date-time
+              readOnly: true
+              example: '2025-09-10T12:30:00.000Z'
         examples:
           sample:
             value:
-              _id: 60c72b2f9b1d9c001f5c8a2b
-              name: Jane Doe
-              email: jane@example.com
+              _id: '60c72b2f9b1d9c001f5c8a2b'
+              name: 'Jane Doe'
+              email: 'jane@example.com'
               gender: 'boy'
               dueDate: '2025-12-31'
-              photoURL: string
+              photoURL: 'https://res.cloudinary.com/dmzxlx1if/image/upload/v1758557714/avatar-image_mccj83.png'
               createdAt: '2025-09-01T10:15:00.000Z'
               updatedAt: '2025-09-10T12:30:00.000Z'
 
