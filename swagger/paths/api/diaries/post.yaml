@@ -1,7 +1,8 @@
 tags: [Diaries]
 summary: Create a new diary entry
 operationId: createDiaryEntry
-description: Creates a new diary entry for the authenticated user. Only title and description are required; emotions are optional.
+description: >
+  Creates a new diary entry for the authenticated user.
 security:
   - bearerAuth: []
 
@@ -12,36 +13,38 @@ requestBody:
       schema:
         type: object
         additionalProperties: false
-        required: [title, description]
+        required: [title, description, date, emotions]
         properties:
           title:
             type: string
             minLength: 1
-            maxLength: 160
-            example: 'A wonderful day'
+            maxLength: 64
+            example: 'Morning'
           description:
             type: string
             minLength: 1
-            example: 'I had a great walk in the park, enjoyed the sunshine...'
+            maxLength: 1000
+            example: 'Short walk and coffee.'
+          date:
+            type: string
+            format: date # YYYY-MM-DD
+            description: Required. The UI is prefilled with today's date by default; the client must send this value explicitly.
+            example: '2025-09-19'
           emotions:
             type: array
-            description: Optional list of emotion IDs. Can be omitted or empty.
+            description: Required. Full list of selected emotion IDs (1–12). The entry will store exactly this list.
             items:
               type: string
               pattern: '^[0-9a-fA-F]{24}$'
-            minItems: 0
-      examples:
-        minimal:
-          summary: Only title & description
-          value:
-            title: 'Test'
-            description: 'Test'
-        withEmotions:
-          summary: With optional emotions
-          value:
-            title: 'Grateful morning'
-            description: 'Felt calm and thankful.'
-            emotions: ['6895bd86a5c677999ed2ae27', '6895bd86a5c677999ed2af11']
+            minItems: 1
+            maxItems: 12
+            uniqueItems: true
+      example:
+        title: 'Morning'
+        description: 'Short walk and coffee.'
+        date: '2025-09-19'
+        emotions:
+          - '6895bd86a5c677999ed2ae27'
 
 responses:
   '201':
