@@ -1,7 +1,11 @@
 tags: [Diaries]
 summary: Update a diary entry
 operationId: updateDiaryEntry
-description: Updates specific fields of an existing diary entry for the authenticated user. Response returns emotions populated with {_id, title}.
+description: >
+  Partially updates an existing diary entry. Send only the fields you want to change.
+  Omitted fields remain unchanged. If you send `emotions`, it must be the full
+  current selection (1–12 unique emotion IDs); if you omit `emotions`, it is not changed.
+  Response returns emotions populated with {_id, title}.
 security:
   - bearerAuth: []
 
@@ -22,46 +26,38 @@ requestBody:
       schema:
         type: object
         additionalProperties: false
-        minProperties: 1
+        minProperties: 1 # ← достатньо одного поля для PATCH
         properties:
           title:
             type: string
+            minLength: 1
+            maxLength: 64
             example: 'Новий заголовок'
           description:
             type: string
+            minLength: 1
+            maxLength: 1000
             example: 'Оновлений текст запису'
+          date:
+            type: string
+            format: date # YYYY-MM-DD
+            description: Date in YYYY-MM-DD format.
+            example: '2025-09-19'
           emotions:
             type: array
-            description: |
-              Full replacement of emotions for the entry.
-              Always send the entire current selection:
-              - array of emotion IDs when some emotions are selected;
-              - an empty array `[]` when none are selected.
-              Partial add/remove is not supported — the list is overwritten.
+            description: >
+              Full replacement of emotions if present (send the entire selection).
+              Must contain 1–12 unique ObjectId strings. Omit this field to keep
+              emotions unchanged.
             items:
               type: string
               pattern: '^[0-9a-fA-F]{24}$'
-            minItems: 0
-      examples:
-        updateTitleOnly:
-          summary: Update only title
-          value:
-            title: 'Попити'
-        updateTitleAndDescription:
-          summary: Update title and description
-          value:
-            title: 'Ранок'
-            description: 'Спокійний настрій, легка прогулянка.'
-        withEmotions:
-          summary: Overwrite emotions with current selection
-          value:
-            emotions:
-              - '6895bd86a5c677999ed2ae20'
-              - '6895bd86a5c677999ed2ae25'
-        withoutEmotions:
-          summary: No emotions selected (send empty array)
-          value:
-            emotions: []
+            minItems: 1
+            maxItems: 12
+            uniqueItems: true
+      example:
+        description: 'Трошки підправив нотатку'
+        # emotions не відправляємо → лишаються без змін
 
 responses:
   '200':
