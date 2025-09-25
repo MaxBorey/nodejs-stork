@@ -7,7 +7,7 @@ import cookieParser from 'cookie-parser';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { swaggerDocs } from './middlewares/swaggerDocs.js';
-import { DOMAIN_FRONT, UPLOAD_DIR } from './constants/index.js';
+import { UPLOAD_DIR } from './constants/index.js';
 
 const PORT = Number(getEnvVar('PORT', '3000'));
 
@@ -15,10 +15,21 @@ export const startServer = () => {
   const app = express();
 
   app.use(express.json());
-  app.use(cors({
-  origin: DOMAIN_FRONT,
-  credentials: true
-}));
+  const whitelist = [
+  "https://stork-final-project.vercel.app",
+  "http://localhost:3000",
+];
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      // дозволяємо запити без Origin (наприклад, з Postman) або зі списку
+      if (!origin || whitelist.includes(origin)) return callback(null, true);
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true, // якщо використовуєте кукі/авторизацію
+  })
+);
   app.use(cookieParser());
   app.use('/api', Router);
   app.use('/uploads', express.static(UPLOAD_DIR));
