@@ -12,3 +12,5 @@ export const CLOUDINARY = {
   API_KEY: 'API_KEY',
   API_SECRET: 'API_SECRET',
 };
+
+export const DOMAIN_FRONT = "https://stork-final-project.vercel.app";
