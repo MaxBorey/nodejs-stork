@@ -2,13 +2,15 @@ import { User } from "../db/models/user.js";
 import createHttpError from 'http-errors';
 import bcrypt from 'bcrypt';
 import { Session } from "../db/models/session.js";
+import { randomBytes } from "node:crypto";
+import { getFullNameFromGoogleTokenPayload, validateCode } from '../utils/googleOAuth2.js';
 import crypto from 'crypto';
 
 
 const createSession = (userId) => ({
   accessToken: crypto.randomBytes(30).toString('base64'),
   refreshToken: crypto.randomBytes(30).toString('base64'),
-  accessTokenValidUntil: new Date(Date.now() + 1000 * 60 * 24), //1 day
+  accessTokenValidUntil: new Date(Date.now() + 1000 * 60 * 15), //15 min
   refreshTokenValidUntil: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30), //30 days
   userId,
 });
@@ -48,4 +50,26 @@ export const loginUser = async ({ email, password }) => {
 
 export const logoutUser = async (sessionId) => {
   await Session.deleteOne({ _id: sessionId });
+};
+
+
+export const loginOrSignupWithGoogle = async (code) => {
+  const loginTicket = await validateCode(code);
+  const payload = loginTicket.getPayload();
+  if (!payload) throw createHttpError(401);
+
+  let user = await User.findOne({ email: payload.email });
+  if (!user) {
+    const password = await bcrypt.hash(randomBytes(10), 10);
+    user = await User.create({
+      email: payload.email,
+      name: getFullNameFromGoogleTokenPayload(payload),
+      password
+    });
+  }
+
+  await Session.findOneAndDelete({ userId: user._id });
+
+  const session = await Session.create(createSession(user._id));
+  return session;
 };
