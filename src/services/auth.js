@@ -15,6 +15,28 @@ const createSession = (userId) => ({
   userId,
 });
 
+export const setupSession = (res, { refreshToken }) => {
+  const isProd = process.env.NODE_ENV === 'production';
+  res.cookie('__Host-refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: isProd,                 // ← у проді тільки через HTTPS
+    sameSite: isProd ? 'none' : 'lax',
+    path: '/',                      // для префікса __Host- обов'язково '/'
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+    // НЕ вказуй domain для __Host-
+  });
+};
+
+export const clearSession = (res) => {
+  const isProd = process.env.NODE_ENV === 'production';
+  res.clearCookie('__Host-refreshToken', {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax',
+    path: '/',
+  });
+};
+
 export const registerUser = async (payload) => {
     const user = await User.findOne({ email: payload.email });
 
@@ -27,6 +49,8 @@ export const registerUser = async (payload) => {
     password: encryptedPassword,
   });
 };
+
+
 
 export const loginUser = async ({ email, password }) => {
   const user = await User.findOne({ email });
@@ -56,20 +80,29 @@ export const logoutUser = async (sessionId) => {
 export const loginOrSignupWithGoogle = async (code) => {
   const loginTicket = await validateCode(code);
   const payload = loginTicket.getPayload();
-  if (!payload) throw createHttpError(401);
+  if (!payload?.email) throw createHttpError(401);
 
   let user = await User.findOne({ email: payload.email });
   if (!user) {
-    const password = await bcrypt.hash(randomBytes(10), 10);
+    const password = await bcrypt.hash(randomBytes(10).toString('hex'), 10);
     user = await User.create({
       email: payload.email,
       name: getFullNameFromGoogleTokenPayload(payload),
-      password
+      password,
     });
   }
 
+
   await Session.findOneAndDelete({ userId: user._id });
 
-  const session = await Session.create(createSession(user._id));
-  return session;
+  const s = createSession(user._id);
+  await Session.create(s); // збереження в БД
+
+
+  return {
+    userId: user._id.toString(),
+    accessToken: s.accessToken,
+    refreshToken: s.refreshToken,
+    refreshTokenValidUntil: s.refreshTokenValidUntil,
+  };
 };
