@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { validateBody } from '../middlewares/validateBody.js';
 import { loginUserSchema, loginWithGoogleOAuthSchema, registerUserSchema } from '../validation/auth.js';
-import { loginUserController, loginWithGoogleController, logoutUserController, registerUserController } from '../controllers/auth.js';
+import { loginUserController, loginWithGoogleController, logoutUserController, refreshUserSessionController, registerUserController } from '../controllers/auth.js';
 import { getGoogleOAuthUrlController } from '../controllers/auth.js';
 
 
@@ -23,6 +23,12 @@ authRouter.post(
   '/auth/logout',
   logoutUserController
 );
+
+authRouter.post(
+  '/auth/refresh',
+  refreshUserSessionController
+);
+
 
 authRouter.get(
   '/get-oauth-url',
