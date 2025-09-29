@@ -76,6 +76,31 @@ export const logoutUser = async (sessionId) => {
   await Session.deleteOne({ _id: sessionId });
 };
 
+export const refreshUsersSession = async (sessionId, refreshToken) => {
+  const session = await Session.findOne({ _id: sessionId, refreshToken });
+
+  if (!session) {
+    throw createHttpError(401, 'Session not found!');
+  }
+
+  if (session.refreshTokenValidUntil < new Date()) {
+    await Session.findByIdAndDelete(sessionId);
+    throw createHttpError(401, 'Session expired!');
+  }
+
+  const user = await User.findById(session.userId);
+
+  if (!user) {
+    await Session.findByIdAndDelete(sessionId);
+    throw createHttpError(401, 'Session not found!');
+  }
+
+  await Session.findByIdAndDelete(sessionId);
+  const newSession = await Session.create(createSession(user._id));
+
+  return newSession;
+};
+
 
 export const loginOrSignupWithGoogle = async (code) => {
   const loginTicket = await validateCode(code);

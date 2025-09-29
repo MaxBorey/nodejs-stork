@@ -1,4 +1,4 @@
-import { loginUser, logoutUser, registerUser } from "../services/auth.js";
+import { loginUser, logoutUser, refreshUsersSession, registerUser } from "../services/auth.js";
 import { ONE_DAY } from "../constants/index.js";
 import { generateAuthUrl } from '../utils/googleOAuth2.js';
 import { loginOrSignupWithGoogle } from '../services/auth.js';
@@ -42,6 +42,23 @@ export const loginUserController = async (req, res) => {
   res.status(200).json({
     message: "Successfully logged in a user!",
     data: { accessToken: session.accessToken }
+  });
+};
+
+export const refreshUserSessionController = async (req, res) => {
+  const session = await refreshUsersSession(
+    req.cookies.sessionId,
+    req.cookies.refreshToken,
+  );
+
+  setupSession(res, session);
+
+  res.json({
+    status: 200,
+    message: 'Successfully refreshed session!',
+    data: {
+      accessToken: session.accessToken,
+    },
   });
 };
 
