@@ -95,10 +95,23 @@ export const loginOrSignupWithGoogle = async (code) => {
   const createdSession = await Session.create(createSession(user._id));
 
   return {
-    _id: createdSession._id, 
+    _id: createdSession._id,
     userId: user._id.toString(),
     accessToken: createdSession.accessToken,
     refreshToken: createdSession.refreshToken,
     refreshTokenValidUntil: createdSession.refreshTokenValidUntil,
   };
+};
+
+export const isSessionValid = async (sessionId, refreshToken) => {
+  if (!sessionId || !refreshToken) return false;
+
+  const session = await Session.findOne({ _id: sessionId, refreshToken });
+  if (!session) return false;
+
+  if (session.refreshTokenValidUntil < new Date()) {
+    await Session.findByIdAndDelete(sessionId);
+    return false;
+  }
+  return true;
 };
