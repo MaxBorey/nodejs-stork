@@ -1,4 +1,4 @@
-import { loginUser, logoutUser, refreshUsersSession, registerUser } from "../services/auth.js";
+import { clearSession, isSessionValid, loginUser, logoutUser, refreshUsersSession, registerUser } from "../services/auth.js";
 import { ONE_DAY } from "../constants/index.js";
 import { generateAuthUrl } from '../utils/googleOAuth2.js';
 import { loginOrSignupWithGoogle } from '../services/auth.js';
@@ -109,5 +109,22 @@ export const loginWithGoogleController = async (req, res, next) => {
     });
   } catch (e) {
     next(e);
+  }
+};
+
+
+export const checkSessionController = async (req, res) => {
+  try {
+    const { sessionId, refreshToken } = req.cookies || {};
+    const valid = await isSessionValid(sessionId, refreshToken);
+
+    if (!valid) {
+      clearSession(res);
+    }
+
+    return res.status(200).json({ valid });
+  } catch {
+    clearSession(res);
+    return res.status(200).json({ valid: false });
   }
 };
