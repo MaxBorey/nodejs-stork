@@ -33,7 +33,6 @@ export const loginUserController = async (req, res) => {
   const cookieOpts = {
     httpOnly: true,
     sameSite: "none",
-    secure: true,
     path: "/",
     maxAge: ONE_DAY
   };
