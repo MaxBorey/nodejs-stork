@@ -8,11 +8,13 @@ const setupSession = (res, session) => {
   res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true,
     sameSite: 'none',
+    secure: true,
     expires: new Date(Date.now() + ONE_DAY),
   });
   res.cookie('sessionId', session._id, {
     httpOnly: true,
     sameSite: 'none',
+    secure: true,
     expires: new Date(Date.now() + ONE_DAY),
   });
 };
@@ -34,6 +36,7 @@ export const loginUserController = async (req, res) => {
     httpOnly: true,
     sameSite: "none",
     path: "/",
+    secure: true,
     maxAge: ONE_DAY
   };
 
