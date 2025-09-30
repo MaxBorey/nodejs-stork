@@ -15,14 +15,6 @@ const createSession = (userId) => ({
   userId,
 });
 
-export const setupSession = (res, { refreshToken }) => {
-  res.cookie('refreshToken', refreshToken, {
-    httpOnly: true,
-    sameSite: "none",
-    path: '/',
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-  });
-};
 
 export const clearSession = (res) => {
   res.clearCookie('refreshToken', {
