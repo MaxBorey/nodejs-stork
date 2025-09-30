@@ -19,7 +19,7 @@ const createSession = (userId) => ({
 export const clearSession = (res) => {
   res.clearCookie('refreshToken', {
     httpOnly: true,
-    sameSite: "none",
+    sameSite: 'none',
     path: '/',
   });
 };
