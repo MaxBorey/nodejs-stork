@@ -5,16 +5,29 @@ import { loginOrSignupWithGoogle } from '../services/auth.js';
 
 
 const setupSession = (res, session) => {
+  const sessionId =
+    session?._id?.toString?.() ??
+    session?.sessionId ??
+    session?.id;
+
+  if (!sessionId) {
+    // щоб не записати "undefined" у куку
+    throw new Error('No sessionId in session object');
+  }
+
   res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true,
     sameSite: 'none',
-    secure: true,
+    secure: true, // в проді обовʼязково
+    path: '/',
     expires: new Date(Date.now() + ONE_DAY),
   });
-  res.cookie('sessionId', session._id, {
+
+  res.cookie('sessionId', sessionId, {
     httpOnly: true,
     sameSite: 'none',
-    secure: true,
+    secure: true, // в проді обовʼязково
+    path: '/',
     expires: new Date(Date.now() + ONE_DAY),
   });
 };
@@ -34,9 +47,9 @@ export const loginUserController = async (req, res) => {
 
   const cookieOpts = {
     httpOnly: true,
-    sameSite: "none",
+    // sameSite: "none",
     path: "/",
-    secure: true,
+    // secure: true,
     maxAge: ONE_DAY
   };
 
