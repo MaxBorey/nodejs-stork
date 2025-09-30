@@ -20,6 +20,7 @@ export const clearSession = (res) => {
   res.clearCookie('refreshToken', {
     httpOnly: true,
     sameSite: 'none',
+    secure: true,
     path: '/',
   });
 };
