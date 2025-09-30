@@ -7,10 +7,12 @@ import { loginOrSignupWithGoogle } from '../services/auth.js';
 const setupSession = (res, session) => {
   res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true,
+    SameSite:"none",
     expires: new Date(Date.now() + ONE_DAY),
   });
   res.cookie('sessionId', session._id, {
     httpOnly: true,
+    SameSite:"none",
     expires: new Date(Date.now() + ONE_DAY),
   });
 };

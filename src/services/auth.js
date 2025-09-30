@@ -15,24 +15,11 @@ const createSession = (userId) => ({
   userId,
 });
 
-export const setupSession = (res, { refreshToken }) => {
-  const isProd = process.env.NODE_ENV === 'production';
-  res.cookie('__Host-refreshToken', refreshToken, {
-    httpOnly: true,
-    secure: isProd,                 // ← у проді тільки через HTTPS
-    sameSite: isProd ? 'none' : 'lax',
-    path: '/',                      // для префікса __Host- обов'язково '/'
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-    // НЕ вказуй domain для __Host-
-  });
-};
 
 export const clearSession = (res) => {
-  const isProd = process.env.NODE_ENV === 'production';
-  res.clearCookie('__Host-refreshToken', {
+  res.clearCookie('refreshToken', {
     httpOnly: true,
-    secure: isProd,
-    sameSite: isProd ? 'none' : 'lax',
+    sameSite: "none",
     path: '/',
   });
 };
