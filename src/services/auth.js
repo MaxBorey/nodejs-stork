@@ -19,8 +19,8 @@ const createSession = (userId) => ({
 export const clearSession = (res) => {
   res.clearCookie('refreshToken', {
     httpOnly: true,
-    sameSite: 'none',
-    secure: true,
+    // sameSite: 'none',
+    // secure: true,
     path: '/',
   });
 };
@@ -105,17 +105,17 @@ export const loginOrSignupWithGoogle = async (code) => {
     });
   }
 
-
   await Session.findOneAndDelete({ userId: user._id });
 
-  const s = createSession(user._id);
-  await Session.create(s); // збереження в БД
+  // ❗️Створюємо і одразу ОТРИМУЄМО документ із _id
+  const createdSession = await Session.create(createSession(user._id));
 
-
+  // Повертаємо все, що треба, включно з _id
   return {
+    _id: createdSession._id,                     // <— додали
     userId: user._id.toString(),
-    accessToken: s.accessToken,
-    refreshToken: s.refreshToken,
-    refreshTokenValidUntil: s.refreshTokenValidUntil,
+    accessToken: createdSession.accessToken,
+    refreshToken: createdSession.refreshToken,
+    refreshTokenValidUntil: createdSession.refreshTokenValidUntil,
   };
 };
