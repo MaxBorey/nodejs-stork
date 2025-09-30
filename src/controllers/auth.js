@@ -4,6 +4,14 @@ import { generateAuthUrl } from '../utils/googleOAuth2.js';
 import { loginOrSignupWithGoogle } from '../services/auth.js';
 
 
+const COOKIE_OPTS = {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'none',
+  path: '/',
+};
+
+
 const setupSession = (res, session) => {
   const sessionId =
     session?._id?.toString?.() ??
@@ -11,23 +19,21 @@ const setupSession = (res, session) => {
     session?.id;
 
   if (!sessionId) {
-    // щоб не записати "undefined" у куку
     throw new Error('No sessionId in session object');
   }
 
+
+  res.clearCookie('refreshToken', COOKIE_OPTS);
+  res.clearCookie('sessionId', COOKIE_OPTS);
+
+  // ставимо ЄДИНІ валідні куки
   res.cookie('refreshToken', session.refreshToken, {
-    httpOnly: true,
-    sameSite: 'none',
-    secure: true, // в проді обовʼязково
-    path: '/',
+    ...COOKIE_OPTS,
     expires: new Date(Date.now() + ONE_DAY),
   });
 
   res.cookie('sessionId', sessionId, {
-    httpOnly: true,
-    sameSite: 'none',
-    secure: true, // в проді обовʼязково
-    path: '/',
+    ...COOKIE_OPTS,
     expires: new Date(Date.now() + ONE_DAY),
   });
 };
@@ -45,20 +51,12 @@ export const registerUserController = async (req, res) => {
 export const loginUserController = async (req, res) => {
   const session = await loginUser(req.body);
 
-  const cookieOpts = {
-    httpOnly: true,
-    // sameSite: "none",
-    path: "/",
-    // secure: true,
-    maxAge: ONE_DAY
-  };
 
-  res.cookie("refreshToken", session.refreshToken, cookieOpts);
-  res.cookie("sessionId", session._id, cookieOpts);
+  setupSession(res, session);
 
   res.status(200).json({
     message: "Successfully logged in a user!",
-    data: { accessToken: session.accessToken }
+    data: { accessToken: session.accessToken },
   });
 };
 
@@ -73,20 +71,18 @@ export const refreshUserSessionController = async (req, res) => {
   res.json({
     status: 200,
     message: 'Successfully refreshed session!',
-    data: {
-      accessToken: session.accessToken,
-    },
+    data: { accessToken: session.accessToken },
   });
 };
-
 
 export const logoutUserController = async (req, res) => {
   if (req.cookies.sessionId) {
     await logoutUser(req.cookies.sessionId);
   }
 
-  res.clearCookie('sessionId');
-  res.clearCookie('refreshToken');
+  // чистимо з ТИМИ Ж опціями
+  res.clearCookie('sessionId',   COOKIE_OPTS);
+  res.clearCookie('refreshToken', COOKIE_OPTS);
 
   res.status(204).send();
 };
@@ -96,16 +92,14 @@ export const getGoogleOAuthUrlController = async (req, res) => {
   res.json({
     status: 200,
     message: 'Successfully get Google OAuth url!',
-    data: {
-      url,
-    },
+    data: { url },
   });
 };
-
 
 export const loginWithGoogleController = async (req, res, next) => {
   try {
     const session = await loginOrSignupWithGoogle(req.body.code);
+
     setupSession(res, session);
 
     res.status(200).json({

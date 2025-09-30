@@ -6,57 +6,48 @@ import { randomBytes } from "node:crypto";
 import { getFullNameFromGoogleTokenPayload, validateCode } from '../utils/googleOAuth2.js';
 import crypto from 'crypto';
 
-
 const createSession = (userId) => ({
   accessToken: crypto.randomBytes(30).toString('base64'),
   refreshToken: crypto.randomBytes(30).toString('base64'),
-  accessTokenValidUntil: new Date(Date.now() + 1000 * 60 * 15), //15 min
-  refreshTokenValidUntil: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30), //30 days
+  accessTokenValidUntil: new Date(Date.now() + 1000 * 60 * 15),         // 15 хв
+  refreshTokenValidUntil: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30), // 30 днів
   userId,
 });
 
 
+const COOKIE_OPTS = {
+  httpOnly: true,
+  sameSite: 'none',
+  secure: true,
+  path: '/',
+};
+
 export const clearSession = (res) => {
-  res.clearCookie('refreshToken', {
-    httpOnly: true,
-    // sameSite: 'none',
-    // secure: true,
-    path: '/',
-  });
+  res.clearCookie('refreshToken', COOKIE_OPTS);
+  res.clearCookie('sessionId', COOKIE_OPTS);
 };
 
 export const registerUser = async (payload) => {
-    const user = await User.findOne({ email: payload.email });
+  const user = await User.findOne({ email: payload.email });
+  if (user) throw createHttpError(409, 'Email in use');
 
-    if (user) throw createHttpError(409, 'Email in use');
+  const encryptedPassword = await bcrypt.hash(payload.password, 10);
 
-    const encryptedPassword = await bcrypt.hash(payload.password, 10);
-
-    return await User.create({
+  return await User.create({
     ...payload,
     password: encryptedPassword,
   });
 };
 
-
-
 export const loginUser = async ({ email, password }) => {
   const user = await User.findOne({ email });
-
-  if (!user) {
-    throw createHttpError(401, 'Invalid email or password');
-  }
+  if (!user) throw createHttpError(401, 'Invalid email or password');
 
   const arePasswordsEqual = await bcrypt.compare(password, user.password);
-
-  if (!arePasswordsEqual) {
-    throw createHttpError(401, 'Invalid email or password');
-  }
+  if (!arePasswordsEqual) throw createHttpError(401, 'Invalid email or password');
 
   await Session.deleteOne({ userId: user._id });
-
   const session = await Session.create(createSession(user._id));
-
   return session;
 };
 
@@ -66,10 +57,7 @@ export const logoutUser = async (sessionId) => {
 
 export const refreshUsersSession = async (sessionId, refreshToken) => {
   const session = await Session.findOne({ _id: sessionId, refreshToken });
-
-  if (!session) {
-    throw createHttpError(401, 'Session not found!');
-  }
+  if (!session) throw createHttpError(401, 'Session not found!');
 
   if (session.refreshTokenValidUntil < new Date()) {
     await Session.findByIdAndDelete(sessionId);
@@ -77,7 +65,6 @@ export const refreshUsersSession = async (sessionId, refreshToken) => {
   }
 
   const user = await User.findById(session.userId);
-
   if (!user) {
     await Session.findByIdAndDelete(sessionId);
     throw createHttpError(401, 'Session not found!');
@@ -85,10 +72,8 @@ export const refreshUsersSession = async (sessionId, refreshToken) => {
 
   await Session.findByIdAndDelete(sessionId);
   const newSession = await Session.create(createSession(user._id));
-
   return newSession;
 };
-
 
 export const loginOrSignupWithGoogle = async (code) => {
   const loginTicket = await validateCode(code);
@@ -107,12 +92,10 @@ export const loginOrSignupWithGoogle = async (code) => {
 
   await Session.findOneAndDelete({ userId: user._id });
 
-  // ❗️Створюємо і одразу ОТРИМУЄМО документ із _id
   const createdSession = await Session.create(createSession(user._id));
 
-  // Повертаємо все, що треба, включно з _id
   return {
-    _id: createdSession._id,                     // <— додали
+    _id: createdSession._id, 
     userId: user._id.toString(),
     accessToken: createdSession.accessToken,
     refreshToken: createdSession.refreshToken,
