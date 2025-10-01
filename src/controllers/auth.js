@@ -23,7 +23,7 @@ const setupSession = (res, session) => {
   res.clearCookie('refreshToken', COOKIE_OPTS);
   res.clearCookie('sessionId', COOKIE_OPTS);
 
-  // ставимо ЄДИНІ валідні куки
+
   res.cookie('refreshToken', session.refreshToken, {
     ...COOKIE_OPTS,
     expires: new Date(Date.now() + ONE_DAY),
