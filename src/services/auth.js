@@ -1,39 +1,34 @@
 import { User } from "../db/models/user.js";
-import createHttpError from "http-errors";
-import bcrypt from "bcrypt";
+import createHttpError from 'http-errors';
+import bcrypt from 'bcrypt';
 import { Session } from "../db/models/session.js";
 import { randomBytes } from "node:crypto";
-import {
-  getFullNameFromGoogleTokenPayload,
-  validateCode,
-} from "../utils/googleOAuth2.js";
-import crypto from "crypto";
+import { getFullNameFromGoogleTokenPayload, validateCode } from '../utils/googleOAuth2.js';
+import crypto from 'crypto';
 
 const createSession = (userId) => ({
-  accessToken: crypto.randomBytes(30).toString("base64"),
-  refreshToken: crypto.randomBytes(30).toString("base64"),
+  accessToken: crypto.randomBytes(30).toString('base64'),
+  refreshToken: crypto.randomBytes(30).toString('base64'),
   accessTokenValidUntil: new Date(Date.now() + 1000 * 60 * 15), // 15 хв
   refreshTokenValidUntil: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30), // 30 днів
   userId,
 });
 
-const IS_PROD = process.env.NODE_ENV === "production";
 const COOKIE_OPTS = {
   httpOnly: true,
-  sameSite: IS_PROD ? "none" : "lax",
-  secure: IS_PROD,
-  path: "/",
+  sameSite: 'none',
+  secure: true,
+  path: '/',
 };
 
 export const clearSession = (res) => {
-  res.clearCookie("accessToken", COOKIE_OPTS);
-  res.clearCookie("refreshToken", COOKIE_OPTS);
-  res.clearCookie("sessionId", COOKIE_OPTS);
+  res.clearCookie('refreshToken', COOKIE_OPTS);
+  res.clearCookie('sessionId', COOKIE_OPTS);
 };
 
 export const registerUser = async (payload) => {
   const user = await User.findOne({ email: payload.email });
-  if (user) throw createHttpError(409, "Email in use");
+  if (user) throw createHttpError(409, 'Email in use');
 
   const encryptedPassword = await bcrypt.hash(payload.password, 10);
 
@@ -45,10 +40,10 @@ export const registerUser = async (payload) => {
 
 export const loginUser = async ({ email, password }) => {
   const user = await User.findOne({ email });
-  if (!user) throw createHttpError(401, "Invalid email or password");
+  if (!user) throw createHttpError(401, 'Invalid email or password');
 
   const arePasswordsEqual = await bcrypt.compare(password, user.password);
-  if (!arePasswordsEqual) throw createHttpError(401, "Invalid email or password");
+  if (!arePasswordsEqual) throw createHttpError(401, 'Invalid email or password');
 
   await Session.deleteOne({ userId: user._id });
   const session = await Session.create(createSession(user._id));
@@ -61,17 +56,17 @@ export const logoutUser = async (sessionId) => {
 
 export const refreshUsersSession = async (sessionId, refreshToken) => {
   const session = await Session.findOne({ _id: sessionId, refreshToken });
-  if (!session) throw createHttpError(401, "Session not found!");
+  if (!session) throw createHttpError(401, 'Session not found!');
 
   if (session.refreshTokenValidUntil < new Date()) {
     await Session.findByIdAndDelete(sessionId);
-    throw createHttpError(401, "Session expired!");
+    throw createHttpError(401, 'Session expired!');
   }
 
   const user = await User.findById(session.userId);
   if (!user) {
     await Session.findByIdAndDelete(sessionId);
-    throw createHttpError(401, "Session not found!");
+    throw createHttpError(401, 'Session not found!');
   }
 
   await Session.findByIdAndDelete(sessionId);
@@ -86,7 +81,7 @@ export const loginOrSignupWithGoogle = async (code) => {
 
   let user = await User.findOne({ email: payload.email });
   if (!user) {
-    const password = await bcrypt.hash(randomBytes(10).toString("hex"), 10);
+    const password = await bcrypt.hash(randomBytes(10).toString('hex'), 10);
     user = await User.create({
       email: payload.email,
       name: getFullNameFromGoogleTokenPayload(payload),
@@ -102,7 +97,6 @@ export const loginOrSignupWithGoogle = async (code) => {
     _id: createdSession._id,
     userId: user._id.toString(),
     accessToken: createdSession.accessToken,
-    accessTokenValidUntil: createdSession.accessTokenValidUntil,
     refreshToken: createdSession.refreshToken,
     refreshTokenValidUntil: createdSession.refreshTokenValidUntil,
   };
